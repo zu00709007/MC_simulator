@@ -1,6 +1,6 @@
 #include "Request.h"
 
-Request::Request(int view_num, int max_user_num, double enter_prob, double leave_prob) : view_num(view_num), max_user_num(max_user_num), enter_prob(enter_prob), leave_prob(leave_prob + enter_prob)
+Request::Request(int view_num, int max_user_num, double enter_prob, double leave_prob, int probability_setting, double zipf_left, double zipf_right) : view_num(view_num), max_user_num(max_user_num), enter_prob(enter_prob), leave_prob(leave_prob + enter_prob), probability_setting(probability_setting), zipf_left(zipf_left), zipf_right(zipf_left + zipf_right)
 {
     curr_user_num = 0;
     view = new int[view_num];
@@ -28,7 +28,6 @@ int Request::request_get(int& curr_request)
             return 0;
 
         ++curr_user_num;
-        //set probability here, it is uniform now
         j = (int)(view_num * (double)rand() / ((double)RAND_MAX + 1));
         ++view[j];
         curr_request = j;
@@ -71,22 +70,42 @@ int Request::request_get(int& curr_request)
         for(j=0; j<view_num; ++j)
             if(view_choose < view_tmp[j])
             {
-                //choose the left, center or right view
-                switch((int)(3*(double)rand()/((double)RAND_MAX+1)))
+                //choose the left, center or right view in uniform
+                if(0 == probability_setting)
+                    switch((int)(3*(double)rand()/((double)RAND_MAX+1)))
+                    {
+                    case 0:
+                        --view[j];
+                        ++view[(j+view_num-1)%view_num];
+                        curr_request = (j + view_num - 1) % view_num;
+                        break;
+                    case 1:
+                        curr_request = j;
+                        break;
+                    case 2:
+                        --view[j];
+                        ++view[(j+1)%view_num];
+                        curr_request = (j + 1) % view_num;
+                        break;
+                    }
+                //choose the left, center or right view in zipf
+                else
                 {
-                case 0:
-                    --view[j];
-                    ++view[(j+view_num-1)%view_num];
-                    curr_request = (j + view_num - 1) % view_num;
-                    break;
-                case 1:
-                    curr_request = j;
-                    break;
-                case 2:
-                    --view[j];
-                    ++view[(j+1)%view_num];
-                    curr_request = (j + 1) % view_num;
-                    break;
+                    double tmp = (double)rand()/((double)RAND_MAX+1);
+                    if(tmp < zipf_left)
+                    {
+                        --view[j];
+                        ++view[(j+view_num-1)%view_num];
+                        curr_request = (j + view_num - 1) % view_num;
+                    }
+                    else if(tmp < zipf_right)
+                    {
+                        --view[j];
+                        ++view[(j+1)%view_num];
+                        curr_request = (j + 1) % view_num;
+                    }
+                    else
+                        curr_request = j;
                 }
                 break;
             }
