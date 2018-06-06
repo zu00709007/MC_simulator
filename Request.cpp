@@ -1,11 +1,18 @@
 #include "Request.h"
 
-Request::Request(int view_num, int max_user_num, double enter_prob, double leave_prob, int probability_setting, double zipf_left, double zipf_right) : view_num(view_num), max_user_num(max_user_num), enter_prob(enter_prob), leave_prob(leave_prob + enter_prob), probability_setting(probability_setting), zipf_left(zipf_left), zipf_right(zipf_left + zipf_right)
+Request::Request(int view_num, int max_user_num, double enter_prob, double leave_prob, int probability_setting, double zipf_left, double zipf_right, int request_num) : view_num(view_num), max_user_num(max_user_num), enter_prob(enter_prob), leave_prob(leave_prob + enter_prob), probability_setting(probability_setting), zipf_left(zipf_left), zipf_right(zipf_left + zipf_right)
 {
     curr_user_num = 0;
     view = new int[view_num];
     for(int i=0; i<view_num; ++i)
         view[i] = 0;
+
+    FILE* output_file;
+    output_file = fopen("request_seed", "w");
+    for(int i=0; i<request_num-1; ++i)
+        fprintf(output_file, "%d\n", request());
+    fprintf(output_file, "%d", request());
+    fclose(output_file);
 }
 
 int Request::request()

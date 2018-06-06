@@ -1,12 +1,13 @@
+#include<stdio.h>
 #include<stdlib.h>
 
 class Request
 {
 public:
-    Request(int, int, double, double, int, double, double);
-    int request();
+    Request(int, int, double, double, int, double, double, int);
 
 private:
+    int request();
     int request_get(int&);
     int curr_user_num;
     int view_num;
