@@ -25,7 +25,6 @@ public:
         build_view(-1, 0, tmp2);
         (*tail) = NULL;
 
-
         data = new struct node_data[view_state_count*cache_state_count*view_num];
         tmp[0] = 0;
         struct view_state *tmp3 = view_state_head;
@@ -60,31 +59,38 @@ public:
 
     void start()
     {
-        for(int i=500; i<501; ++i)
+        int i, j, k, curr_user, other_user;
+        for(i=250; i<251; ++i)
         {
-            int curr_user = -1;
-            for(int j=0; j<max_user_num; ++j)
+            curr_user = -1;
+            for(j=0; j<max_user_num; ++j)
                 if(-1 == data[i].view_state_index->view[j])
                     ++curr_user;
                 else
                     break;
 
-            for(int k=0; k<max_user_num; ++k)
+            for(k=0; k<max_user_num; ++k)
                 printf("%d ", data[i].view_state_index->view[k]);
             printf("\n");
-            for(int k=0; k<cache_size; ++k)
+            for(k=0; k<cache_size; ++k)
                 printf("%d ", data[i].cache_state_index->cache[k]);
             printf("\n-------------\n");
 
-            for(int j=0; j<view_state_count*cache_state_count*view_num; j+=view_num)
+            for(j=0; j<view_state_count*cache_state_count*view_num; j+=view_num)
             {
-                add_event(curr_user, i, j);
-                leave_event(curr_user, i, j);
-                stay_event(curr_user, i, j);
+                other_user = -1;
+                for(k=0; k<max_user_num; ++k)
+                    if(-1 == data[j].view_state_index->view[k])
+                        ++other_user;
+                    else
+                        break;
+                add_event(curr_user, other_user, i, j);
+                leave_event(curr_user, other_user, i, j);
+                stay_event(curr_user, other_user, i, j);
             }
         }
 
-        for(vector<int>::iterator it=data[500].neighborhood.begin(); it!=data[500].neighborhood.end(); ++it)
+        for(vector<int>::iterator it=data[250].neighborhood.begin(); it!=data[250].neighborhood.end(); ++it)
         {
             for(int k=0; k<max_user_num; ++k)
                 printf("%d ", data[*it].view_state_index->view[k]);
@@ -95,20 +101,40 @@ public:
         }
     }
 
-    void stay_event(int curr_user, int i, int j)
+    void stay_event(int curr_user, int other_user, int i, int j)
     {
+        int same;
+        if(curr_user != other_user)
+            return;
+        ++other_user;
+        ++curr_user;
+        same = curr_user;
+        while(curr_user < max_user_num)
+        {
+            if(data[i].view_state_index->view[curr_user] != data[j].view_state_index->view[other_user])
+                break;
+            ++other_user;
+            ++curr_user;
+        }
+        if(other_user < max_user_num && -1 != data[i].view_state_index->view[curr_user] - data[j].view_state_index->view[other_user] && 1 != data[i].view_state_index->view[curr_user] - data[j].view_state_index->view[other_user])
+            return;
+        for(int k=other_user+1; k<max_user_num; ++k)
+            if(data[i].view_state_index->view[k] != data[j].view_state_index->view[k])
+                return;
 
+        //check cache state
+        if(find_difference(i, j) > (range_size << 1)+1)
+            return;
+
+        if(other_user < max_user_num)
+            data[i].neighborhood.push_back(j + data[j].view_state_index->view[other_user]);
+        else
+            for(; same<max_user_num; ++same)
+                data[i].neighborhood.push_back(j + data[j].view_state_index->view[same]);
     }
 
-    void add_event(int curr_user, int i, int j)
+    void add_event(int curr_user, int other_user, int i, int j)
     {
-        int other_user = -1;
-        for(int k=0; k<max_user_num; ++k)
-            if(-1 == data[j].view_state_index->view[k])
-                ++other_user;
-            else
-                break;
-        //check Nt state
         if(curr_user-1 != other_user)
             return;
         ++other_user;
@@ -129,15 +155,8 @@ public:
         data[i].neighborhood.push_back(j + data[j].view_state_index->view[other_user]);
     }
 
-    void leave_event(int curr_user, int i, int j)
+    void leave_event(int curr_user, int other_user, int i, int j)
     {
-        int other_user = -1;
-        for(int k=0; k<max_user_num; ++k)
-            if(-1 == data[j].view_state_index->view[k])
-                ++other_user;
-            else
-                break;
-        //check Nt state
         if(curr_user+1 != other_user)
             return;
         ++curr_user;
@@ -259,7 +278,7 @@ int main(int argc, char **argv)
     srand(time(NULL));
     FILE* output_file;
     int i, curr_request, view_num = 5, max_user_num = 2;
-    int cache_size = 3, range_size = 0, DIBR_range = 3;
+    int cache_size = 3, range_size = 1, DIBR_range = 3;
     double enter_prob = 0.6, leave_prob = 0.1;
 
     //0 is uniform, 1 is zipf, save the request seed for test
