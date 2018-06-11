@@ -10,7 +10,7 @@ using namespace std;
 class MDP_train
 {
 public:
-    MDP_train(int cache_size, int view_num, int max_user_num, int range_size) : cache_size(cache_size), view_num(view_num), max_user_num(max_user_num), range_size(range_size)
+    MDP_train(int cache_size, int view_num, int max_user_num, int range_size, int DIBR_range) : cache_size(cache_size), view_num(view_num), max_user_num(max_user_num), range_size(range_size), DIBR_range(DIBR_range)
     {
         int tmp[cache_size];
         //build the cache state list
@@ -44,17 +44,6 @@ public:
             }
             tmp3 = tmp3->next;
         }
-
-        /*for(int i=1370000; i<view_state_count*cache_state_count*view_num; ++i)
-        {
-            for(int j=0; j<max_user_num; ++j)
-                printf("%d ", data[i].view_state_index->view[j]);
-
-            for(int j=0; j<cache_size; ++j)
-                printf("%d ", data[i].cache_state_index->cache[j]);
-
-            printf("%d\n", i%view_num);
-        }*/
     }
 
     void start()
@@ -68,13 +57,6 @@ public:
                     ++curr_user;
                 else
                     break;
-
-            for(k=0; k<max_user_num; ++k)
-                printf("%d ", data[i].view_state_index->view[k]);
-            printf("\n");
-            for(k=0; k<cache_size; ++k)
-                printf("%d ", data[i].cache_state_index->cache[k]);
-            printf("\n-------------\n");
 
             for(j=0; j<view_state_count*cache_state_count*view_num; j+=view_num)
             {
@@ -90,7 +72,12 @@ public:
             }
         }
 
-        for(vector<int>::iterator it=data[250].neighborhood.begin(); it!=data[250].neighborhood.end(); ++it)
+        for(int k=0; k<cache_size; ++k)
+            printf("%d ", data[20].cache_state_index->cache[k]);
+        vector<int> diff;
+        diff.push_back(2);
+        printf("\n%d\n", check_cache(20, 2, diff));
+        /*for(vector<int>::iterator it=data[250].neighborhood.begin(); it!=data[250].neighborhood.end(); ++it)
         {
             for(int k=0; k<max_user_num; ++k)
                 printf("%d ", data[*it].view_state_index->view[k]);
@@ -98,7 +85,92 @@ public:
             for(int k=0; k<cache_size; ++k)
                 printf("%d ", data[*it].cache_state_index->cache[k]);
             printf("\n%d\n", (*it) % view_num);
+        }*/
+    }
+
+private:
+    void node_hit(int i, vector<int> &diff)
+    {
+        vector<int> tmp;
+        for(int j=1; j<=range_size; ++j)
+            diff.push_back(check_cache(i, (i%view_num+view_num-j)%view_num, tmp));
+
+        for(int j=0; j<=range_size; ++j)
+            diff.push_back(check_cache(i, (i%view_num+j)%view_num, tmp));
+    }
+
+    int check_cache(int i, int curr_request, vector<int> &addition)
+    {
+        int left_min = view_num, left_max = -1, right_min = view_num, right_max = -1;
+        for(int j=0; j<cache_size; ++j)
+        {
+            //check if the view is hit
+            if(curr_request == data[i].cache_state_index->cache[j])
+                return 1;
+
+            //get the synthesis view for checking the DIBR_range
+            if(curr_request < data[i].cache_state_index->cache[j])
+            {
+                if(data[i].cache_state_index->cache[j] < right_min)
+                    right_min = data[i].cache_state_index->cache[j];
+                if(data[i].cache_state_index->cache[j] > right_max)
+                    right_max = data[i].cache_state_index->cache[j];
+            }
+            else
+            {
+                if(data[i].cache_state_index->cache[j] < left_min)
+                    left_min = data[i].cache_state_index->cache[j];
+                if(data[i].cache_state_index->cache[j] > left_max)
+                    left_max = data[i].cache_state_index->cache[j];
+            }
         }
+        for(vector<int>::iterator it=addition.begin(); it!=addition.end(); ++it)
+        {
+            //check if the view is hit
+            if(curr_request == (*it))
+                return 1;
+            //get the synthesis view for checking the DIBR_range
+            if(curr_request < (*it))
+            {
+                if((*it) < right_min)
+                    right_min = (*it);
+                if((*it) > right_max)
+                    right_max = (*it);
+            }
+            else
+            {
+                if((*it) < left_min)
+                    left_min = (*it);
+                if((*it) > left_max)
+                    left_max = (*it);
+            }
+        }
+        if((right_min != view_num && left_max != -1 && DIBR_range >= right_min - left_max) ||
+                (left_min * left_max >= 0 && left_min != left_max && DIBR_range >= left_min - left_max + view_num) ||
+                (right_min * right_max >= 0 && right_min != right_max && DIBR_range >= right_min - right_max + view_num))
+            return 0;
+        return -1;
+    }
+
+    void compare(int i, int j, vector<int> &diff)
+    {
+        int curr_cache = 0, other_cache = 0;
+        while(curr_cache < cache_size && other_cache < cache_size)
+        {
+            if(data[i].cache_state_index->cache[curr_cache] > data[j].cache_state_index->cache[other_cache])
+            {
+                diff.push_back(data[j].cache_state_index->cache[other_cache++]);
+            }
+            else if(data[i].cache_state_index->cache[curr_cache] == data[j].cache_state_index->cache[other_cache])
+            {
+                ++curr_cache;
+                ++other_cache;
+            }
+            else
+                ++curr_cache;
+        }
+        while(other_cache < cache_size)
+            diff.push_back(data[j].cache_state_index->cache[other_cache++]);
     }
 
     void stay_event(int curr_user, int other_user, int i, int j)
@@ -198,7 +270,6 @@ public:
         return i;
     }
 
-private:
     void build_state(int start, int layer, int tmp[])
     {
         if(layer >= cache_size)
@@ -271,19 +342,20 @@ private:
     int view_num;
     int max_user_num;
     int range_size;
+    int DIBR_range;
 };
 
 int main(int argc, char **argv)
 {
     srand(time(NULL));
     FILE* output_file;
-    int i, curr_request, view_num = 5, max_user_num = 2;
+    int i, curr_request, view_num = 16, max_user_num = 2;
     int cache_size = 3, range_size = 1, DIBR_range = 3;
     double enter_prob = 0.6, leave_prob = 0.1;
 
     //0 is uniform, 1 is zipf, save the request seed for test
     Request request(view_num, max_user_num, enter_prob, leave_prob, 0, 0.502615, 0.288676, 500000);
-    MDP_train mdp_train(cache_size, view_num, max_user_num, range_size);
+    MDP_train mdp_train(cache_size, view_num, max_user_num, range_size, DIBR_range);
     mdp_train.start();
 
 
