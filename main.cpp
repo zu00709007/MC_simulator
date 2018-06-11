@@ -10,7 +10,7 @@ using namespace std;
 class MDP_train
 {
 public:
-    MDP_train(int cache_size, int view_num, int max_user_num, int range_size, int DIBR_range) : cache_size(cache_size), view_num(view_num), max_user_num(max_user_num), range_size(range_size), DIBR_range(DIBR_range)
+    MDP_train(int cache_size, int view_num, int max_user_num, int range_size, int DIBR_range, double cm, double cf, double cs, double a) : cache_size(cache_size), view_num(view_num), max_user_num(max_user_num), range_size(range_size), DIBR_range(DIBR_range), cm(cm), cf(cf), cs(cs), a(a)
     {
         int tmp[cache_size];
         //build the cache state list
@@ -37,7 +37,6 @@ public:
                 {
                     data[tmp[0]].view_state_index = tmp3;
                     data[tmp[0]].cache_state_index = tmp4;
-                    data[tmp[0]].cost = 0;
                     ++tmp[0];
                 }
                 tmp4 = tmp4->next;
@@ -49,7 +48,7 @@ public:
     void start()
     {
         int i, j, k, curr_user, other_user;
-        for(i=250; i<251; ++i)
+        for(i=2; i<3; ++i)
         {
             curr_user = -1;
             for(j=0; j<max_user_num; ++j)
@@ -72,12 +71,123 @@ public:
             }
         }
 
-        for(int k=0; k<cache_size; ++k)
+        for(i=2; i<3; ++i)
+        {
+            vector<int> is_hit;
+            node_hit(i, is_hit);
+            if(is_hit[0]==1 && is_hit[1]==1 && is_hit[2]==1)
+            {
+                for(vector<int>::iterator it=data[i].neighborhood.begin(); it!=data[i].neighborhood.end(); ++it)
+                {
+                    switch(find_difference(i, *it))
+                    {
+                    case 0:
+                        //data[i].cost.push_back(3*cs);
+                        //printf("%d\n", data[i].cost[data[i].cost.size()-1]);
+                        break;
+                    case 1:
+                        break;
+                    case 2:
+                        break;
+                    }
+                }
+            }
+            if(is_hit[0]==1 && is_hit[1]==1 && is_hit[2]==0)
+            {
+
+            }
+            if(is_hit[0]==1 && is_hit[1]==1 && is_hit[2]==-1)
+            {
+                for(vector<int>::iterator it=data[i].neighborhood.begin(); it!=data[i].neighborhood.end(); ++it)
+                {
+                    vector<int> diff;
+                    vector<int> tmphit;
+                    compare(i, *it, diff);
+                    switch(find_difference(i, *it))
+                    {
+                    case 0:
+                        break;
+                    case 1:
+                        for(int j=1; j<=range_size; ++j)
+                            tmphit.push_back(check_cache(i, (i%view_num+view_num-j)%view_num, diff));
+                        for(int j=0; j<=range_size; ++j)
+                            tmphit.push_back(check_cache(i, (i%view_num+j)%view_num, diff));
+                        if(1 == tmphit[2])
+                        {
+                            printf("123\n");
+                        }
+                        break;
+                    case 2:
+                        break;
+                    case 3:
+                        break;
+                    }
+                }
+            }
+            if(is_hit[0]==1 && is_hit[1]==0 && is_hit[2]==1)
+            {
+
+            }
+            if(is_hit[0]==1 && is_hit[1]==0 && is_hit[2]==0)
+            {
+
+            }
+
+            if(is_hit[0]==1 && is_hit[1]==-1 && is_hit[2]==-1)
+            {
+
+            }
+            if(is_hit[0]==0 && is_hit[1]==1 && is_hit[2]==1)
+            {
+
+            }
+            if(is_hit[0]==0 && is_hit[1]==1 && is_hit[2]==0)
+            {
+
+            }
+            if(is_hit[0]==0 && is_hit[1]==1 && is_hit[2]==-1)
+            {
+
+            }
+            if(is_hit[0]==0 && is_hit[1]==0 && is_hit[2]==1)
+            {
+
+            }
+            if(is_hit[0]==0 && is_hit[1]==0 && is_hit[2]==0)
+            {
+
+            }
+
+
+            if(is_hit[0]==-1 && is_hit[1]==1 && is_hit[2]==1)
+            {
+
+            }
+            if(is_hit[0]==-1 && is_hit[1]==1 && is_hit[2]==0)
+            {
+
+            }
+            if(is_hit[0]==-1 && is_hit[1]==1 && is_hit[2]==-1)
+            {
+
+            }
+
+            if(is_hit[0]==-1 && is_hit[1]==-1 && is_hit[2]==1)
+            {
+
+            }
+            if(is_hit[0]==-1 && is_hit[1]==-1 && is_hit[2]==-1)
+            {
+
+            }
+        }
+
+        /*for(int k=0; k<cache_size; ++k)
             printf("%d ", data[20].cache_state_index->cache[k]);
         vector<int> diff;
         diff.push_back(2);
         printf("\n%d\n", check_cache(20, 2, diff));
-        /*for(vector<int>::iterator it=data[250].neighborhood.begin(); it!=data[250].neighborhood.end(); ++it)
+        for(vector<int>::iterator it=data[250].neighborhood.begin(); it!=data[250].neighborhood.end(); ++it)
         {
             for(int k=0; k<max_user_num; ++k)
                 printf("%d ", data[*it].view_state_index->view[k]);
@@ -333,8 +443,8 @@ private:
     {
         struct view_state *view_state_index;
         struct cache_state *cache_state_index;
-        int cost;
         vector<int> neighborhood;
+        vector<int> cost;
     };
     struct node_data *data;
 
@@ -343,6 +453,7 @@ private:
     int max_user_num;
     int range_size;
     int DIBR_range;
+    double cm, cf, cs, a;
 };
 
 int main(int argc, char **argv)
@@ -352,14 +463,13 @@ int main(int argc, char **argv)
     int i, curr_request, view_num = 16, max_user_num = 2;
     int cache_size = 3, range_size = 1, DIBR_range = 3;
     double enter_prob = 0.6, leave_prob = 0.1;
+    double cm = 10, cf = 5, cs = 4, a = 0.3;
 
     //0 is uniform, 1 is zipf, save the request seed for test
     Request request(view_num, max_user_num, enter_prob, leave_prob, 0, 0.502615, 0.288676, 500000);
-    MDP_train mdp_train(cache_size, view_num, max_user_num, range_size, DIBR_range);
+    MDP_train mdp_train(cache_size, view_num, max_user_num, range_size, DIBR_range, cm, cf, cs, a);
     mdp_train.start();
 
-
-    double cm = 10, cf = 5, cs = 4, a = 0.3;
     char file_name1[30] = "./result/LRU_cost_";
     char file_name2[30] = "./result/LRU_hit_";
     char file_name3[30] = "./result/LRU_synthesis_";
