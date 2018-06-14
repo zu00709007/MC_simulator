@@ -82,30 +82,43 @@ public:
                     switch(find_difference(i, *it))
                     {
                     case 0:
-                        //data[i].cost.push_back(3*cs);
+                        data[i].cost.push_back(3*cs);
                         //printf("%d\n", data[i].cost[data[i].cost.size()-1]);
                         break;
                     case 1:
+                        data[i].cost.push_back(100000);
                         break;
                     case 2:
+                        data[i].cost.push_back(100000);
+                        break;
+                    case 3:
+                        data[i].cost.push_back(100000);
                         break;
                     }
                 }
             }
             if(is_hit[0]==1 && is_hit[1]==1 && is_hit[2]==0)
             {
-
-            }
-            if(is_hit[0]==1 && is_hit[1]==1 && is_hit[2]==-1)
-            {
+                int r = i%view_num;
                 for(vector<int>::iterator it=data[i].neighborhood.begin(); it!=data[i].neighborhood.end(); ++it)
                 {
                     vector<int> diff;
+                    vector<int> dis;
+                    dis.clear();
                     vector<int> tmphit;
                     compare(i, *it, diff);
+                    double syn_rl;
+                    double syn_rc;
+                    double syn_rr;
                     switch(find_difference(i, *it))
                     {
                     case 0:
+                        syn_rr = dibr_distance(i, (r+1)%view_num, dis);
+                        dis.clear();
+                        if((3*cs+a*syn_rr)>(cf+3*cs))
+                            data[i].cost.push_back(cf+3*cs);
+                        else
+                            data[i].cost.push_back(3*cs+a*syn_rr);
                         break;
                     case 1:
                         for(int j=1; j<=range_size; ++j)
@@ -114,78 +127,2521 @@ public:
                             tmphit.push_back(check_cache(i, (i%view_num+j)%view_num, diff));
                         if(1 == tmphit[2])
                         {
-                            printf("123\n");
+                            data[i].cost.push_back(cf+3*cs);
+                        }
+                        if(0 == tmphit[2])
+                        {
+                            syn_rr = dibr_distance(i, (r+1)%view_num, diff);
+                            dis.clear();
+                            if((cf+3*cs+a*syn_rr)>(2*cf+3*cs))
+                                data[i].cost.push_back(2*cf+3*cs);
+                            else
+                                data[i].cost.push_back(cf+3*cs+a*syn_rr);
                         }
                         break;
                     case 2:
+                        for(int j=1; j<=range_size; ++j)
+                            tmphit.push_back(check_cache(i, (i%view_num+view_num-j)%view_num, diff));
+                        for(int j=0; j<=range_size; ++j)
+                            tmphit.push_back(check_cache(i, (i%view_num+j)%view_num, diff));
+                        if(1 == tmphit[2])
+                        {
+                            data[i].cost.push_back(2*cf+3*cs);
+                        }
+                        if(0 == tmphit[2])
+                        {
+                            syn_rr = dibr_distance(i, (r+1)%view_num, diff);
+                            dis.clear();
+                            if((2*cf+3*cs+a*syn_rr)>(3*cf+3*cs))
+                                data[i].cost.push_back(3*cf+3*cs);
+                            else
+                                data[i].cost.push_back(2*cf+3*cs+a*syn_rr);
+                        }
                         break;
                     case 3:
+                        for(int j=1; j<=range_size; ++j)
+                            tmphit.push_back(check_cache(i, (i%view_num+view_num-j)%view_num, diff));
+                        for(int j=0; j<=range_size; ++j)
+                            tmphit.push_back(check_cache(i, (i%view_num+j)%view_num, diff));
+                        if(1 == tmphit[2])
+                        {
+                            data[i].cost.push_back(3*cf+3*cs);
+                        }
+                        if(0 == tmphit[2])
+                        {
+                            syn_rr = dibr_distance(i, (r+1)%view_num, diff);
+                            dis.clear();
+                            data[i].cost.push_back(3*cf+3*cs+a*syn_rr);
+                        }
+                        break;
+                    }
+                }
+            }
+            if(is_hit[0]==1 && is_hit[1]==1 && is_hit[2]==-1)
+            {
+                int r = i%view_num;
+                for(vector<int>::iterator it=data[i].neighborhood.begin(); it!=data[i].neighborhood.end(); ++it)
+                {
+                    vector<int> diff;
+                    vector<int> dis;
+                    dis.clear();
+                    vector<int> tmphit;
+                    compare(i, *it, diff);
+                    double syn_rl;
+                    double syn_rc;
+                    double syn_rr;
+                    switch(find_difference(i, *it))
+                    {
+                    case 0:
+                        data[i].cost.push_back(cf+3*cs);
+                        break;
+                    case 1:
+                        for(int j=1; j<=range_size; ++j)
+                            tmphit.push_back(check_cache(i, (i%view_num+view_num-j)%view_num, diff));
+                        for(int j=0; j<=range_size; ++j)
+                            tmphit.push_back(check_cache(i, (i%view_num+j)%view_num, diff));
+                        if(1 == tmphit[2])
+                        {
+                            data[i].cost.push_back(cf+3*cs);
+                        }
+                        if(0 == tmphit[2])
+                        {
+                            syn_rr = dibr_distance(i, (r+1)%view_num, diff);
+                            dis.clear();
+                            if((cf+3*cs+a*syn_rr)>(2*cf+3*cs))
+                                data[i].cost.push_back(2*cf+3*cs);
+                            else
+                                data[i].cost.push_back(cf+3*cs+a*syn_rr);
+                        }
+                        if(-1 == tmphit[2])
+                        {
+                            data[i].cost.push_back(2*cf+3*cs);
+                        }
+                        break;
+                    case 2:
+                        for(int j=1; j<=range_size; ++j)
+                            tmphit.push_back(check_cache(i, (i%view_num+view_num-j)%view_num, diff));
+                        for(int j=0; j<=range_size; ++j)
+                            tmphit.push_back(check_cache(i, (i%view_num+j)%view_num, diff));
+                        if(1 == tmphit[2])
+                        {
+                            data[i].cost.push_back(2*cf+3*cs);
+                        }
+                        if(0 == tmphit[2])
+                        {
+                            syn_rr = dibr_distance(i, (r+1)%view_num, diff);
+                            dis.clear();
+                            if((2*cf+3*cs+a*syn_rr)>(3*cf+3*cs))
+                                data[i].cost.push_back(3*cf+3*cs);
+                            else
+                                data[i].cost.push_back(2*cf+3*cs+a*syn_rr);
+                        }
+                        if(-1 == tmphit[2])
+                        {
+                            data[i].cost.push_back(3*cf+3*cs);
+                        }
+                        break;
+                    case 3:
+                        for(int j=1; j<=range_size; ++j)
+                            tmphit.push_back(check_cache(i, (i%view_num+view_num-j)%view_num, diff));
+                        for(int j=0; j<=range_size; ++j)
+                            tmphit.push_back(check_cache(i, (i%view_num+j)%view_num, diff));
+                        if(1 == tmphit[2])
+                        {
+                            data[i].cost.push_back(3*cf+3*cs);
+                        }
+                        if(0 == tmphit[2])
+                        {
+                            syn_rr = dibr_distance(i, (r+1)%view_num, diff);
+                            dis.clear();
+                            data[i].cost.push_back(3*cf+3*cs+a*syn_rr);
+                        }
                         break;
                     }
                 }
             }
             if(is_hit[0]==1 && is_hit[1]==0 && is_hit[2]==1)
             {
-
+                int r = i%view_num;
+                for(vector<int>::iterator it=data[i].neighborhood.begin(); it!=data[i].neighborhood.end(); ++it)
+                {
+                    vector<int> diff;
+                    vector<int> tmphit;
+                    vector<int> dis;
+                    dis.clear();
+                    compare(i, *it, diff);
+                    double syn_rl;
+                    double syn_rc;
+                    double syn_rr;
+                    switch(find_difference(i, *it))
+                    {
+                    case 0:
+                        syn_rc = dibr_distance(i, r, dis);
+                        dis.clear();
+                        if((3*cs+a*syn_rc)>(cf+3*cs))
+                            data[i].cost.push_back(cf+3*cs);
+                        else
+                            data[i].cost.push_back(3*cs+a*syn_rc);
+                        break;
+                    case 1:
+                        for(int j=1; j<=range_size; ++j)
+                            tmphit.push_back(check_cache(i, (i%view_num+view_num-j)%view_num, diff));
+                        for(int j=0; j<=range_size; ++j)
+                            tmphit.push_back(check_cache(i, (i%view_num+j)%view_num, diff));
+                        if(1 == tmphit[1])
+                        {
+                            data[i].cost.push_back(cf+3*cs);
+                        }
+                        if(0 == tmphit[1])
+                        {
+                            syn_rc = dibr_distance(i, r, diff);
+                            dis.clear();
+                            if((cf+3*cs+a*syn_rc)>(2*cf+3*cs))
+                                data[i].cost.push_back(2*cf+3*cs);
+                            else
+                                data[i].cost.push_back(cf+3*cs+a*syn_rc);
+                        }
+                        break;
+                    case 2:
+                        for(int j=1; j<=range_size; ++j)
+                            tmphit.push_back(check_cache(i, (i%view_num+view_num-j)%view_num, diff));
+                        for(int j=0; j<=range_size; ++j)
+                            tmphit.push_back(check_cache(i, (i%view_num+j)%view_num, diff));
+                        if(1 == tmphit[1])
+                        {
+                            data[i].cost.push_back(2*cf+3*cs);
+                        }
+                        if(0 == tmphit[1])
+                        {
+                            syn_rc = dibr_distance(i, r, diff);
+                            dis.clear();
+                            if((2*cf+3*cs+a*syn_rc)>(3*cf+3*cs))
+                                data[i].cost.push_back(3*cf+3*cs);
+                            else
+                                data[i].cost.push_back(2*cf+3*cs+a*syn_rc);
+                        }
+                        break;
+                    case 3:
+                        for(int j=1; j<=range_size; ++j)
+                            tmphit.push_back(check_cache(i, (i%view_num+view_num-j)%view_num, diff));
+                        for(int j=0; j<=range_size; ++j)
+                            tmphit.push_back(check_cache(i, (i%view_num+j)%view_num, diff));
+                        if(1 == tmphit[1])
+                        {
+                            data[i].cost.push_back(3*cf+3*cs);
+                        }
+                        if(0 == tmphit[1])
+                        {
+                            syn_rc = dibr_distance(i, r, diff);
+                            dis.clear();
+                            data[i].cost.push_back(3*cf+3*cs+a*syn_rc);
+                        }
+                        break;
+                    }
+                }
             }
             if(is_hit[0]==1 && is_hit[1]==0 && is_hit[2]==0)
             {
-
+                int r = i%view_num;
+                for(vector<int>::iterator it=data[i].neighborhood.begin(); it!=data[i].neighborhood.end(); ++it)
+                {
+                    vector<int> diff;
+                    vector<int> tmphit;
+                    vector<int> dis;
+                    dis.clear();
+                    compare(i, *it, diff);
+                    double syn_rl;
+                    double syn_rc;
+                    double syn_rr;
+                    double cost1;
+                    double cost2;
+                    double cost3;
+                    double cost4;
+                    switch(find_difference(i, *it))
+                    {
+                    case 0:
+                        cost1 = cf+3*cs+a*dibr_distance(i, (r+1)%view_num, dis)+a*dibr_distance(i, r, dis);
+                        dis.clear();
+                        dis.push_back((r+1)%view_num);
+                        cost2 = 2*cf+3*cs+a*dibr_distance(i, r, dis);
+                        dis.clear();
+                        dis.push_back(r);
+                        cost3 = 2*cf+3*cs+a*dibr_distance(i, (r+1)%view_num, dis);
+                        dis.clear();
+                        cost4 = 3*cf+3*cs;
+                        if(((cost1)<=(cost2)) && ((cost1)<=(cost3)) && ((cost1)<=(cost4)))
+                            data[i].cost.push_back(cost1);
+                        else if(((cost2)<=(cost1)) && ((cost2)<=(cost3)) && ((cost2)<=(cost4)))
+                            data[i].cost.push_back(cost2);
+                        else if(((cost3)<=(cost1)) && ((cost3)<=(cost2)) && ((cost3)<=(cost4)))
+                            data[i].cost.push_back(cost3);
+                        else if(((cost4)<=(cost1)) && ((cost4)<=(cost2)) && ((cost4)<=(cost3)))
+                            data[i].cost.push_back(cost4);
+                        break;
+                    case 1:
+                        for(int j=1; j<=range_size; ++j)
+                            tmphit.push_back(check_cache(i, (i%view_num+view_num-j)%view_num, diff));
+                        for(int j=0; j<=range_size; ++j)
+                            tmphit.push_back(check_cache(i, (i%view_num+j)%view_num, diff));
+                        if((1 == tmphit[1]) && (0 == tmphit[2]) )
+                        {
+                            syn_rr = dibr_distance(i, (r+1)%view_num, diff);
+                            dis.clear();
+                            if((cf+3*cs+a*syn_rr)>(2*cf+3*cs))
+                                data[i].cost.push_back(2*cf+3*cs);
+                            else
+                                data[i].cost.push_back(cf+3*cs+a*syn_rr);
+                        }
+                        if((0 == tmphit[1]) && (1 == tmphit[2]))
+                        {
+                            syn_rc = dibr_distance(i, r, diff);
+                            dis.clear();
+                            if((cf+3*cs+a*syn_rc)>(2*cf+3*cs))
+                                data[i].cost.push_back(2*cf+3*cs);
+                            else
+                                data[i].cost.push_back(cf+3*cs+a*syn_rc);
+                        }
+                        if((0 == tmphit[1]) && (0 == tmphit[2]))
+                        {
+                            cost1 = cf+3*cs+a*dibr_distance(i, (r+1)%view_num, diff)+a*dibr_distance(i, r, diff);
+                            dis.clear();
+                            dis.push_back((r+1)%view_num);
+                            dis.push_back(diff[0]);
+                            cost2 = 2*cf+3*cs+a*dibr_distance(i, r, dis);
+                            dis.clear();
+                            dis.push_back(r);
+                            dis.push_back(diff[0]);
+                            cost3 = 2*cf+3*cs+a*dibr_distance(i, (r+1)%view_num, dis);
+                            dis.clear();
+                            cost4 = 3*cf+3*cs;
+                            if((cost1<=cost2) && (cost1<=cost3) && (cost1<=cost4))
+                                data[i].cost.push_back(cost1);
+                            else if((cost2<=cost1) && (cost2<=cost3) && (cost2<=cost4))
+                                data[i].cost.push_back(cost2);
+                            else if((cost3<=cost1) && (cost3<=cost2) && (cost3<=cost4))
+                                data[i].cost.push_back(cost3);
+                            else if((cost4<=cost1) && (cost4<=cost2) && (cost4<=cost3))
+                                data[i].cost.push_back(cost4);
+                        }
+                        break;
+                    case 2:
+                        for(int j=1; j<=range_size; ++j)
+                            tmphit.push_back(check_cache(i, (i%view_num+view_num-j)%view_num, diff));
+                        for(int j=0; j<=range_size; ++j)
+                            tmphit.push_back(check_cache(i, (i%view_num+j)%view_num, diff));
+                        if((1 == tmphit[1]) && (1 == tmphit[2]))
+                        {
+                            data[i].cost.push_back(2*cf+3*cs);
+                        }
+                        if((1 == tmphit[1]) && (0 == tmphit[2]))
+                        {
+                            syn_rr = dibr_distance(i, (r+1)%view_num, diff);
+                            dis.clear();
+                            if((2*cf+3*cs+a*syn_rr)>(3*cf+3*cs))
+                                data[i].cost.push_back(3*cf+3*cs);
+                            else
+                                data[i].cost.push_back(2*cf+3*cs+a*syn_rr);
+                        }
+                        if((0 == tmphit[1]) && (1 == tmphit[2]))
+                        {
+                            syn_rc = dibr_distance(i, r, diff);
+                            dis.clear();
+                            if((2*cf+3*cs+a*syn_rc)>(3*cf+3*cs))
+                                data[i].cost.push_back(3*cf+3*cs);
+                            else
+                                data[i].cost.push_back(2*cf+3*cs+a*syn_rc);
+                        }
+                        if((0 == tmphit[1]) && (0 == tmphit[2]))
+                        {
+                            cost1 = 2*cf+3*cs+a*dibr_distance(i, (r+1)%view_num, diff)+a*dibr_distance(i, r, diff);
+                            dis.clear();
+                            dis.push_back(r);
+                            dis.push_back(diff[0]);
+                            dis.push_back(diff[1]);
+                            cost2 = 3*cf+3*cs+a*dibr_distance(i, (r+1)%view_num, dis);
+                            dis.clear();
+                            dis.push_back((r+1)%view_num);
+                            dis.push_back(diff[0]);
+                            dis.push_back(diff[1]);
+                            cost3 = 3*cf+3*cs+a*dibr_distance(i, r, dis);
+                            dis.clear();
+                            if((cost1<=cost2) && (cost1<=cost3))
+                                data[i].cost.push_back(cost1);
+                            else if((cost2<=cost1) && (cost2<=cost3))
+                                data[i].cost.push_back(cost2);
+                            else if((cost3<=cost1) && (cost3<=cost2))
+                                data[i].cost.push_back(cost3);
+                        }
+                        break;
+                    case 3:
+                        for(int j=1; j<=range_size; ++j)
+                            tmphit.push_back(check_cache(i, (i%view_num+view_num-j)%view_num, diff));
+                        for(int j=0; j<=range_size; ++j)
+                            tmphit.push_back(check_cache(i, (i%view_num+j)%view_num, diff));
+                        if((1 == tmphit[1]) && (1 == tmphit[2]))
+                        {
+                            data[i].cost.push_back(3*cf+3*cs);
+                        }
+                        if((1 == tmphit[1]) && (0 == tmphit[2]))
+                        {
+                            syn_rr = dibr_distance(i, (r+1)%view_num, diff);
+                            dis.clear();
+                            data[i].cost.push_back(3*cf+3*cs+a*syn_rr);
+                        }
+                        if((0 == tmphit[1]) && (1 == tmphit[2]))
+                        {
+                            syn_rc = dibr_distance(i, r, diff);
+                            dis.clear();
+                            data[i].cost.push_back(3*cf+3*cs+a*syn_rc);
+                        }
+                        if((0 == tmphit[1]) && (0 == tmphit[2]))
+                        {
+                            syn_rr = dibr_distance(i, (r+1)%view_num, diff);
+                            syn_rc = dibr_distance(i, r, diff);
+                            dis.clear();
+                            data[i].cost.push_back(3*cf+3*cs+a*syn_rr+a*syn_rc);
+                        }
+                        break;
+                    }
+                }
             }
 
             if(is_hit[0]==1 && is_hit[1]==-1 && is_hit[2]==-1)
             {
+                int r = i%view_num;
+                for(vector<int>::iterator it=data[i].neighborhood.begin(); it!=data[i].neighborhood.end(); ++it)
+                {
+                    vector<int> diff;
+                    vector<int> tmphit;
+                    vector<int> dis;
+                    dis.clear();
+                    compare(i, *it, diff);
+                    double syn_rl;
+                    double syn_rc;
+                    double syn_rr;
+                    double cost1 ;
+                    double cost2 ;
+                    double cost3 ;
+                    double cost4 ;
+                    switch(find_difference(i, *it))
+                    {
+                    case 0:
+                        data[i].cost.push_back(2*cf+3*cs);
+                        break;
+                    case 1:
+                        for(int j=1; j<=range_size; ++j)
+                            tmphit.push_back(check_cache(i, (i%view_num+view_num-j)%view_num, diff));
+                        for(int j=0; j<=range_size; ++j)
+                            tmphit.push_back(check_cache(i, (i%view_num+j)%view_num, diff));
+                        if((1 == tmphit[1]) && (-1 == tmphit[2]) )
+                        {
+                            data[i].cost.push_back(2*cf+3*cs);
+                        }
+                        if((1 == tmphit[1]) && (0 == tmphit[2]))
+                        {
+                            syn_rr = dibr_distance(i, (r+1)%view_num, diff);
+                            dis.clear();
+                            if((cf+3*cs+a*syn_rr)>(2*cf+3*cs))
+                                data[i].cost.push_back(2*cf+3*cs);
+                            else
+                                data[i].cost.push_back(cf+3*cs+a*syn_rr);
+                        }
+                        if((0 == tmphit[1]) && (1 == tmphit[2]))
+                        {
+                            syn_rc = dibr_distance(i, r, diff);
+                            dis.clear();
+                            if((cf+3*cs+a*syn_rc)>(2*cf+3*cs))
+                                data[i].cost.push_back(2*cf+3*cs);
+                            else
+                                data[i].cost.push_back(cf+3*cs+a*syn_rc);
 
+                        }
+                        if((0 == tmphit[1]) && (0 == tmphit[2]))
+                        {
+                            cost1 = cf+3*cs+a*dibr_distance(i, (r+1)%view_num, diff)+a*dibr_distance(i, r, diff);
+                            dis.clear();
+                            dis.push_back((r+1)%view_num);
+                            dis.push_back(diff[0]);
+                            cost2 = 2*cf+3*cs+a*dibr_distance(i, r, dis);
+                            dis.clear();
+                            dis.push_back(r);
+                            dis.push_back(diff[0]);
+                            cost3 = 2*cf+3*cs+a*dibr_distance(i, (r+1)%view_num, dis);
+                            dis.clear();
+                            cost4 = 3*cf+3*cs;
+                            if((cost1<=cost2) && (cost1<=cost3) && (cost1<=cost4))
+                                data[i].cost.push_back(cost1);
+                            else if((cost2<=cost1) && (cost2<=cost3) && (cost2<=cost4))
+                                data[i].cost.push_back(cost2);
+                            else if((cost3<=cost1) && (cost3<=cost2) && (cost3<=cost4))
+                                data[i].cost.push_back(cost3);
+                            else if((cost4<=cost1) && (cost4<=cost2) && (cost4<=cost3))
+                                data[i].cost.push_back(cost4);
+                        }
+                        if((-1 == tmphit[1]) && (-1 == tmphit[2]) )
+                        {
+                            data[i].cost.push_back(3*cf+3*cs);
+                        }
+                        break;
+                    case 2:
+                        for(int j=1; j<=range_size; ++j)
+                            tmphit.push_back(check_cache(i, (i%view_num+view_num-j)%view_num, diff));
+                        for(int j=0; j<=range_size; ++j)
+                            tmphit.push_back(check_cache(i, (i%view_num+j)%view_num, diff));
+                        if((1 == tmphit[1]) && (1 == tmphit[2]))
+                        {
+                            data[i].cost.push_back(2*cf+3*cs);
+                        }
+                        if((1 == tmphit[1]) && (0 == tmphit[2]))
+                        {
+                            syn_rr = dibr_distance(i, (r+1)%view_num, diff);
+                            dis.clear();
+                            if((2*cf+3*cs+a*syn_rr)>(3*cf+3*cs))
+                                data[i].cost.push_back(3*cf+3*cs);
+                            else
+                                data[i].cost.push_back(2*cf+3*cs+a*syn_rr);
+                        }
+                        if((1 == tmphit[1]) && (-1 == tmphit[2]))
+                        {
+                            data[i].cost.push_back(3*cf+3*cs);
+                        }
+                        if((0 == tmphit[1]) && (1 == tmphit[2]))
+                        {
+                            syn_rc = dibr_distance(i, r, diff);
+                            dis.clear();
+                            if((2*cf+3*cs+a*syn_rc)>(3*cf+3*cs))
+                                data[i].cost.push_back(3*cf+3*cs);
+                            else
+                                data[i].cost.push_back(2*cf+3*cs+a*syn_rc);
+                        }
+                        if((0 == tmphit[1]) && (0 == tmphit[2]))
+                        {
+                            cost1 = 2*cf+3*cs+a*dibr_distance(i, (r+1)%view_num, diff)+a*dibr_distance(i, r, diff);
+                            dis.clear();
+                            dis.push_back(r);
+                            dis.push_back(diff[0]);
+                            dis.push_back(diff[1]);
+                            cost2 = 3*cf+3*cs+a*dibr_distance(i, (r+1)%view_num, dis);
+                            dis.clear();
+                            dis.push_back((r+1)%view_num);
+                            dis.push_back(diff[0]);
+                            dis.push_back(diff[1]);
+                            cost3 = 3*cf+3*cs+a*dibr_distance(i, r, dis);
+                            dis.clear();
+                            if((cost1<=cost2) && (cost1<=cost3))
+                                data[i].cost.push_back(cost1);
+                            else if((cost2<=cost1) && (cost2<=cost3))
+                                data[i].cost.push_back(cost2);
+                            else if((cost3<=cost1) && (cost3<=cost2))
+                                data[i].cost.push_back(cost3);
+                        }
+                        if((-1 == tmphit[1]) && (-1 == tmphit[2]))
+                        {
+                            data[i].cost.push_back(3*cf+3*cs+a*syn_rc);
+                        }
+                        break;
+                    case 3:
+                        for(int j=1; j<=range_size; ++j)
+                            tmphit.push_back(check_cache(i, (i%view_num+view_num-j)%view_num, diff));
+                        for(int j=0; j<=range_size; ++j)
+                            tmphit.push_back(check_cache(i, (i%view_num+j)%view_num, diff));
+                        if((1 == tmphit[1]) && (1 == tmphit[2]))
+                        {
+                            data[i].cost.push_back(3*cf+3*cs);
+                        }
+                        if((1 == tmphit[1]) && (0 == tmphit[2]))
+                        {
+                            syn_rr = dibr_distance(i, (r+1)%view_num, diff);
+                            dis.clear();
+                            data[i].cost.push_back(3*cf+3*cs+a*syn_rr);
+                        }
+                        if((0 == tmphit[1]) && (1 == tmphit[2]))
+                        {
+                            syn_rc = dibr_distance(i, r, diff);
+                            dis.clear();
+                            data[i].cost.push_back(3*cf+3*cs+a*syn_rc);
+                        }
+                        if((0 == tmphit[1]) && (0 == tmphit[2]))
+                        {
+                            syn_rc = dibr_distance(i, r, diff);
+                            syn_rr = dibr_distance(i, (r+1)%view_num, diff);
+                            dis.clear();
+                            data[i].cost.push_back(3*cf+3*cs+a*syn_rr+a*syn_rc);
+                        }
+                        break;
+                    }
+                }
             }
             if(is_hit[0]==0 && is_hit[1]==1 && is_hit[2]==1)
             {
-
+                int r = i%view_num;
+                for(vector<int>::iterator it=data[i].neighborhood.begin(); it!=data[i].neighborhood.end(); ++it)
+                {
+                    vector<int> diff;
+                    vector<int> tmphit;
+                    vector<int> dis;
+                    dis.clear();
+                    compare(i, *it, diff);
+                    double syn_rl;
+                    double syn_rc;
+                    double syn_rr;
+                    switch(find_difference(i, *it))
+                    {
+                    case 0:
+                        syn_rl = dibr_distance(i, (r+view_num-1)%view_num, dis);
+                        dis.clear();
+                        if((3*cs+a*syn_rl)>(cf+3*cs))
+                            data[i].cost.push_back(cf+3*cs);
+                        else
+                            data[i].cost.push_back(3*cs+a*syn_rr);
+                        break;
+                    case 1:
+                        for(int j=1; j<=range_size; ++j)
+                            tmphit.push_back(check_cache(i, (i%view_num+view_num-j)%view_num, diff));
+                        for(int j=0; j<=range_size; ++j)
+                            tmphit.push_back(check_cache(i, (i%view_num+j)%view_num, diff));
+                        if(1 == tmphit[0])
+                        {
+                            data[i].cost.push_back(cf+3*cs);
+                        }
+                        if(0 == tmphit[0])
+                        {
+                            syn_rl = dibr_distance(i, (r+view_num-1)%view_num, diff);
+                            dis.clear();
+                            if((cf+3*cs+a*syn_rl)>(2*cf+3*cs))
+                                data[i].cost.push_back(2*cf+3*cs);
+                            else
+                                data[i].cost.push_back(cf+3*cs+a*syn_rl);
+                        }
+                        break;
+                    case 2:
+                        for(int j=1; j<=range_size; ++j)
+                            tmphit.push_back(check_cache(i, (i%view_num+view_num-j)%view_num, diff));
+                        for(int j=0; j<=range_size; ++j)
+                            tmphit.push_back(check_cache(i, (i%view_num+j)%view_num, diff));
+                        if(1 == tmphit[0])
+                        {
+                            data[i].cost.push_back(2*cf+3*cs);
+                        }
+                        if(0 == tmphit[0])
+                        {
+                            syn_rl = dibr_distance(i, (r+view_num-1)%view_num, diff);
+                            dis.clear();
+                            if((2*cf+3*cs+a*syn_rl)>(3*cf+3*cs))
+                                data[i].cost.push_back(3*cf+3*cs);
+                            else
+                                data[i].cost.push_back(2*cf+3*cs+a*syn_rl);
+                        }
+                        break;
+                    case 3:
+                        for(int j=1; j<=range_size; ++j)
+                            tmphit.push_back(check_cache(i, (i%view_num+view_num-j)%view_num, diff));
+                        for(int j=0; j<=range_size; ++j)
+                            tmphit.push_back(check_cache(i, (i%view_num+j)%view_num, diff));
+                        if(1 == tmphit[0])
+                        {
+                            data[i].cost.push_back(3*cf+3*cs);
+                        }
+                        if(0 == tmphit[0])
+                        {
+                            syn_rl = dibr_distance(i, (r+view_num-1)%view_num, diff);
+                            dis.clear();
+                            data[i].cost.push_back(3*cf+3*cs+a*syn_rl);
+                        }
+                        break;
+                    }
+                }
             }
             if(is_hit[0]==0 && is_hit[1]==1 && is_hit[2]==0)
             {
-
+                int r = i%view_num;
+                for(vector<int>::iterator it=data[i].neighborhood.begin(); it!=data[i].neighborhood.end(); ++it)
+                {
+                    vector<int> diff;
+                    vector<int> tmphit;
+                    vector<int> dis;
+                    dis.clear();
+                    compare(i, *it, diff);
+                    double syn_rl;
+                    double syn_rc;
+                    double syn_rr;
+                    double cost1 ;
+                    double cost2 ;
+                    double cost3 ;
+                    double cost4 ;
+                    switch(find_difference(i, *it))
+                    {
+                    case 0:
+                        cost1 = 3*cs+a*dibr_distance(i, (r+view_num-1)%view_num, dis)+a*dibr_distance(i, (r+1)%view_num, dis);
+                        dis.clear();
+                        dis.push_back((r+view_num-1)%view_num);
+                        cost2 = cf+3*cs+a*dibr_distance(i, (r+1)%view_num, dis);
+                        dis.clear();
+                        dis.push_back((r+1)%view_num);
+                        cost3 = cf+3*cs+a*dibr_distance(i, (r+view_num-1)%view_num, dis);
+                        dis.clear();
+                        cost4 = 2*cf+3*cs;
+                        if((cost1<=cost2) && (cost1<=cost3) && (cost1<=cost4))
+                            data[i].cost.push_back(cost1);
+                        else if((cost2<=cost1) && (cost2<=cost3) && (cost2<=cost4))
+                            data[i].cost.push_back(cost2);
+                        else if((cost3<=cost1) && (cost3<=cost2) && (cost3<=cost4))
+                            data[i].cost.push_back(cost3);
+                        else if((cost4<=cost1) && (cost4<=cost2) && (cost4<=cost3))
+                            data[i].cost.push_back(cost4);
+                        break;
+                    case 1:
+                        for(int j=1; j<=range_size; ++j)
+                            tmphit.push_back(check_cache(i, (i%view_num+view_num-j)%view_num, diff));
+                        for(int j=0; j<=range_size; ++j)
+                            tmphit.push_back(check_cache(i, (i%view_num+j)%view_num, diff));
+                        if((1 == tmphit[0]) && (0 == tmphit[2]) )
+                        {
+                            syn_rr = dibr_distance(i, (r+1)%view_num, diff);
+                            dis.clear();
+                            if((cf+3*cs+a*syn_rr)>(2*cf+3*cs))
+                                data[i].cost.push_back(2*cf+3*cs);
+                            else
+                                data[i].cost.push_back(cf+3*cs+a*syn_rr);
+                        }
+                        if((0 == tmphit[0]) && (1 == tmphit[2]))
+                        {
+                            syn_rl = dibr_distance(i, (r+view_num-1)%view_num, diff);
+                            dis.clear();
+                            if((cf+3*cs+a*syn_rl)>(2*cf+3*cs))
+                                data[i].cost.push_back(2*cf+3*cs);
+                            else
+                                data[i].cost.push_back(cf+3*cs+a*syn_rl);
+                        }
+                        if((0 == tmphit[0]) && (0 == tmphit[2]))
+                        {
+                            cost1 = cf+3*cs+a*dibr_distance(i, (r+1)%view_num, diff)+a*dibr_distance(i, (r+view_num-1)%view_num, diff);
+                            dis.clear();
+                            dis.push_back((r+1)%view_num);
+                            dis.push_back(diff[0]);
+                            cost2 = 2*cf+3*cs+a*dibr_distance(i, (r+view_num-1)%view_num, dis);
+                            dis.clear();
+                            dis.push_back((r+view_num-1)%view_num);
+                            dis.push_back(diff[0]);
+                            cost3 = 2*cf+3*cs+a*dibr_distance(i, (r+1)%view_num, dis);
+                            dis.clear();
+                            cost4 = 3*cf+3*cs;
+                            if((cost1<=cost2) && (cost1<=cost3) && (cost1<=cost4))
+                                data[i].cost.push_back(cost1);
+                            else if((cost2<=cost1) && (cost2<=cost3) && (cost2<=cost4))
+                                data[i].cost.push_back(cost2);
+                            else if((cost3<=cost1) && (cost3<=cost2) && (cost3<=cost4))
+                                data[i].cost.push_back(cost3);
+                            else if((cost4<=cost1) && (cost4<=cost2) && (cost4<=cost3))
+                                data[i].cost.push_back(cost4);
+                        }
+                        break;
+                    case 2:
+                        for(int j=1; j<=range_size; ++j)
+                            tmphit.push_back(check_cache(i, (i%view_num+view_num-j)%view_num, diff));
+                        for(int j=0; j<=range_size; ++j)
+                            tmphit.push_back(check_cache(i, (i%view_num+j)%view_num, diff));
+                        if((1 == tmphit[0]) && (1 == tmphit[2]))
+                        {
+                            data[i].cost.push_back(2*cf+3*cs);
+                        }
+                        if((1 == tmphit[0]) && (0 == tmphit[2]))
+                        {
+                            syn_rr = dibr_distance(i, (r+1)%view_num, diff);
+                            dis.clear();
+                            if((2*cf+3*cs+a*syn_rr)>(3*cf+3*cs))
+                                data[i].cost.push_back(3*cf+3*cs);
+                            else
+                                data[i].cost.push_back(2*cf+3*cs+a*syn_rr);
+                        }
+                        if((0 == tmphit[0]) && (1 == tmphit[2]))
+                        {
+                            syn_rl = dibr_distance(i, (r+view_num-1)%view_num, diff);
+                            dis.clear();
+                            if((2*cf+3*cs+a*syn_rl)>(3*cf+3*cs))
+                                data[i].cost.push_back(3*cf+3*cs);
+                            else
+                                data[i].cost.push_back(2*cf+3*cs+a*syn_rl);
+                        }
+                        if((0 == tmphit[0]) && (0 == tmphit[2]))
+                        {
+                            cost1 = 2*cf+3*cs+a*dibr_distance(i, (r+1)%view_num, diff)+a*dibr_distance(i, (r+view_num-1)%view_num, diff);
+                            dis.clear();
+                            dis.push_back((r+view_num-1)%view_num);
+                            dis.push_back(diff[0]);
+                            dis.push_back(diff[1]);
+                            cost2 = 3*cf+3*cs+a*dibr_distance(i, (r+1)%view_num, dis);
+                            dis.clear();
+                            dis.push_back((r+1)%view_num);
+                            dis.push_back(diff[0]);
+                            dis.push_back(diff[1]);
+                            cost3 = 3*cf+3*cs+a*dibr_distance(i, (r+view_num-1)%view_num, dis);
+                            dis.clear();
+                            if((cost1<=cost2) && (cost1<=cost3))
+                                data[i].cost.push_back(cost1);
+                            else if((cost2<=cost1) && (cost2<=cost3))
+                                data[i].cost.push_back(cost2);
+                            else if((cost3<=cost1) && (cost3<=cost2))
+                                data[i].cost.push_back(cost3);
+                        }
+                        break;
+                    case 3:
+                        for(int j=1; j<=range_size; ++j)
+                            tmphit.push_back(check_cache(i, (i%view_num+view_num-j)%view_num, diff));
+                        for(int j=0; j<=range_size; ++j)
+                            tmphit.push_back(check_cache(i, (i%view_num+j)%view_num, diff));
+                        if((1 == tmphit[0]) && (1 == tmphit[2]))
+                        {
+                            data[i].cost.push_back(3*cf+3*cs);
+                        }
+                        if((1 == tmphit[0]) && (0 == tmphit[2]))
+                        {
+                            syn_rr = dibr_distance(i, (r+1)%view_num, diff);
+                            dis.clear();
+                            data[i].cost.push_back(3*cf+3*cs+a*syn_rr);
+                        }
+                        if((0 == tmphit[0]) && (1 == tmphit[2]))
+                        {
+                            syn_rl = dibr_distance(i, (r+view_num-1)%view_num, diff);
+                            dis.clear();
+                            data[i].cost.push_back(3*cf+3*cs+a*syn_rl);
+                        }
+                        if((0 == tmphit[0]) && (0 == tmphit[2]))
+                        {
+                            syn_rl = dibr_distance(i, (r+view_num-1)%view_num, diff);
+                            syn_rr = dibr_distance(i, (r+1)%view_num, diff);
+                            dis.clear();
+                            data[i].cost.push_back(3*cf+3*cs+a*syn_rr+a*syn_rl);
+                        }
+                        break;
+                    }
+                }
             }
             if(is_hit[0]==0 && is_hit[1]==1 && is_hit[2]==-1)
             {
-
+                int r = i%view_num;
+                for(vector<int>::iterator it=data[i].neighborhood.begin(); it!=data[i].neighborhood.end(); ++it)
+                {
+                    vector<int> diff;
+                    vector<int> tmphit;
+                    vector<int> dis;
+                    dis.clear();
+                    compare(i, *it, diff);
+                    double syn_rl;
+                    double syn_rc;
+                    double syn_rr;
+                    double cost1;
+                    double cost2;
+                    double cost3;
+                    double cost4;
+                    switch(find_difference(i, *it))
+                    {
+                    case 0:
+                        dis.clear();
+                        dis.push_back((r+1)%view_num);
+                        syn_rl = dibr_distance(i, (r+view_num-1)%view_num, dis);
+                        dis.clear();
+                        if((cf+3*cs+a*syn_rl)>(2*cf+3*cs))
+                            data[i].cost.push_back(2*cf+3*cs);
+                        else
+                            data[i].cost.push_back(cf+3*cs+a*syn_rl);
+                        break;
+                    case 1:
+                        for(int j=1; j<=range_size; ++j)
+                            tmphit.push_back(check_cache(i, (i%view_num+view_num-j)%view_num, diff));
+                        for(int j=0; j<=range_size; ++j)
+                            tmphit.push_back(check_cache(i, (i%view_num+j)%view_num, diff));
+                        if((1 == tmphit[0]) && (-1 == tmphit[2]) )
+                        {
+                            data[i].cost.push_back(2*cf+3*cs);
+                        }
+                        if((0 == tmphit[0]) && (1 == tmphit[2]))
+                        {
+                            syn_rl = dibr_distance(i, (r+view_num-1)%view_num, diff);
+                            dis.clear();
+                            if((cf+3*cs+a*syn_rl)>(2*cf+3*cs))
+                                data[i].cost.push_back(2*cf+3*cs);
+                            else
+                                data[i].cost.push_back(cf+3*cs+a*syn_rl);
+                        }
+                        if((0 == tmphit[0]) && (0 == tmphit[2]))
+                        {
+                            cost1 = cf+3*cs+a*dibr_distance(i, (r+1)%view_num, diff)+a*dibr_distance(i, (r+view_num-1)%view_num, diff);
+                            dis.clear();
+                            dis.push_back((r+1)%view_num);
+                            dis.push_back(diff[0]);
+                            cost2 = 2*cf+3*cs+a*dibr_distance(i, (r+view_num-1)%view_num, dis);
+                            dis.clear();
+                            dis.push_back((r+view_num-1)%view_num);
+                            dis.push_back(diff[0]);
+                            cost3 = 2*cf+3*cs+a*dibr_distance(i, (r+1)%view_num, dis);
+                            dis.clear();
+                            cost4 = 3*cf+3*cs;
+                            if((cost1<=cost2) && (cost1<=cost3) && (cost1<=cost4))
+                                data[i].cost.push_back(cost1);
+                            else if((cost2<=cost1) && (cost2<=cost3) && (cost2<=cost4))
+                                data[i].cost.push_back(cost2);
+                            else if((cost3<=cost1) && (cost3<=cost2) && (cost3<=cost4))
+                                data[i].cost.push_back(cost3);
+                            else if((cost4<=cost1) && (cost4<=cost2) && (cost4<=cost3))
+                                data[i].cost.push_back(cost4);
+                        }
+                        if((0 == tmphit[0]) && (-1 == tmphit[2]))
+                        {
+                            dis.clear();
+                            dis.push_back((r+1)%view_num);
+                            dis.push_back(diff[0]);
+                            syn_rl = dibr_distance(i, (r+view_num-1)%view_num, dis);
+                            dis.clear();
+                            if((2*cf+3*cs+a*syn_rl)>(3*cf+3*cs))
+                                data[i].cost.push_back(3*cf+3*cs);
+                            else
+                                data[i].cost.push_back(2*cf+3*cs+a*syn_rl);
+                        }
+                        break;
+                    case 2:
+                        for(int j=1; j<=range_size; ++j)
+                            tmphit.push_back(check_cache(i, (i%view_num+view_num-j)%view_num, diff));
+                        for(int j=0; j<=range_size; ++j)
+                            tmphit.push_back(check_cache(i, (i%view_num+j)%view_num, diff));
+                        if((1 == tmphit[0]) && (1 == tmphit[2]))
+                        {
+                            data[i].cost.push_back(2*cf+3*cs);
+                        }
+                        if((1 == tmphit[0]) && (0 == tmphit[2]))
+                        {
+                            syn_rl = dibr_distance(i, (r+view_num-1)%view_num, diff);
+                            dis.clear();
+                            if((2*cf+3*cs+a*syn_rr)>(3*cf+3*cs))
+                                data[i].cost.push_back(3*cf+3*cs);
+                            else
+                                data[i].cost.push_back(2*cf+3*cs+a*syn_rr);
+                        }
+                        if((1 == tmphit[0]) && (-1 == tmphit[2]))
+                        {
+                            data[i].cost.push_back(3*cf+3*cs);
+                        }
+                        if((0 == tmphit[0]) && (1 == tmphit[2]))
+                        {
+                            syn_rl = dibr_distance(i, (r+view_num-1)%view_num, diff);
+                            dis.clear();
+                            if((2*cf+3*cs+a*syn_rl)>(3*cf+3*cs))
+                                data[i].cost.push_back(3*cf+3*cs);
+                            else
+                                data[i].cost.push_back(2*cf+3*cs+a*syn_rl);
+                        }
+                        if((0 == tmphit[0]) && (0 == tmphit[2]))
+                        {
+                            cost1 = 2*cf+3*cs+a*dibr_distance(i, (r+1)%view_num, diff)+a*dibr_distance(i, (r+view_num-1)%view_num, diff);
+                            dis.clear();
+                            dis.push_back((r+view_num-1)%view_num);
+                            dis.push_back(diff[0]);
+                            dis.push_back(diff[1]);
+                            cost2 = 3*cf+3*cs+a*dibr_distance(i, (r+1)%view_num, dis);
+                            dis.clear();
+                            dis.push_back((r+1)%view_num);
+                            dis.push_back(diff[0]);
+                            dis.push_back(diff[1]);
+                            cost3 = 3*cf+3*cs+a*syn_rl;
+                            dis.clear();
+                            if((cost1<=cost2) && (cost1<=cost3))
+                                data[i].cost.push_back(cost1);
+                            else if((cost2<=cost1) && (cost2<=cost3))
+                                data[i].cost.push_back(cost2);
+                            else if((cost3<=cost1) && (cost3<=cost2))
+                                data[i].cost.push_back(cost3);
+                        }
+                        if((0 == tmphit[0]) && (-1 == tmphit[2]))
+                        {
+                            dis.clear();
+                            dis.push_back((r+1)%view_num);
+                            dis.push_back(diff[0]);
+                            dis.push_back(diff[1]);
+                            syn_rl = dibr_distance(i, (r+view_num-1)%view_num, dis);
+                            dis.clear();
+                            data[i].cost.push_back(3*cf+3*cs+a*syn_rl);
+                        }
+                        break;
+                    case 3:
+                        for(int j=1; j<=range_size; ++j)
+                            tmphit.push_back(check_cache(i, (i%view_num+view_num-j)%view_num, diff));
+                        for(int j=0; j<=range_size; ++j)
+                            tmphit.push_back(check_cache(i, (i%view_num+j)%view_num, diff));
+                        if((1 == tmphit[0]) && (1 == tmphit[2]))
+                        {
+                            data[i].cost.push_back(3*cf+3*cs);
+                        }
+                        if((1 == tmphit[0]) && (0 == tmphit[2]))
+                        {
+                            syn_rr = dibr_distance(i, (r+1)%view_num, diff);
+                            dis.clear();
+                            data[i].cost.push_back(3*cf+3*cs+a*syn_rr);
+                        }
+                        if((0 == tmphit[0]) && (1 == tmphit[2]))
+                        {
+                            syn_rl = dibr_distance(i, (r+view_num-1)%view_num, diff);
+                            dis.clear();
+                            data[i].cost.push_back(3*cf+3*cs+a*syn_rl);
+                        }
+                        if((0 == tmphit[0]) && (0 == tmphit[2]))
+                        {
+                            syn_rl = dibr_distance(i, (r+view_num-1)%view_num, diff);
+                            syn_rr = dibr_distance(i, (r+1)%view_num, diff);
+                            dis.clear();
+                            data[i].cost.push_back(3*cf+3*cs+a*syn_rr+a*syn_rl);
+                        }
+                        break;
+                    }
+                }
             }
             if(is_hit[0]==0 && is_hit[1]==0 && is_hit[2]==1)
             {
-
+                int r = i%view_num;
+                for(vector<int>::iterator it=data[i].neighborhood.begin(); it!=data[i].neighborhood.end(); ++it)
+                {
+                    vector<int> diff;
+                    vector<int> tmphit;
+                    vector<int> dis;
+                    dis.clear();
+                    compare(i, *it, diff);
+                    double syn_rl;
+                    double syn_rc;
+                    double syn_rr;
+                    double cost1;
+                    double cost2;
+                    double cost3;
+                    double cost4;
+                    switch(find_difference(i, *it))
+                    {
+                    case 0:
+                        dis.clear();
+                        cost1 = 3*cs+a*dibr_distance(i, (r+view_num-1)%view_num, dis)+a*dibr_distance(i, r, dis);
+                        dis.clear();
+                        dis.push_back(r);
+                        cost2 = cf+3*cs+a*dibr_distance(i, (r+view_num-1)%view_num, dis);
+                        dis.clear();
+                        dis.push_back((r+view_num-1)%view_num);
+                        cost3 = cf+3*cs+a*dibr_distance(i, r, dis);
+                        dis.clear();
+                        cost4 = 2*cf+3*cs;
+                        if(((cost1)<=(cost2)) && ((cost1)<=(cost3)) && ((cost1)<=(cost4)))
+                            data[i].cost.push_back(cost1);
+                        else if(((cost2)<=(cost1)) && ((cost2)<=(cost3)) && ((cost2)<=(cost4)))
+                            data[i].cost.push_back(cost2);
+                        else if(((cost3)<=(cost1)) && ((cost3)<=(cost2)) && ((cost3)<=(cost4)))
+                            data[i].cost.push_back(cost3);
+                        else if(((cost4)<=(cost1)) && ((cost4)<=(cost2)) && ((cost4)<=(cost3)))
+                            data[i].cost.push_back(cost4);
+                        break;
+                    case 1:
+                        for(int j=1; j<=range_size; ++j)
+                            tmphit.push_back(check_cache(i, (i%view_num+view_num-j)%view_num, diff));
+                        for(int j=0; j<=range_size; ++j)
+                            tmphit.push_back(check_cache(i, (i%view_num+j)%view_num, diff));
+                        if((0 == tmphit[0]) && (1 == tmphit[1]) )
+                        {
+                            syn_rl = dibr_distance(i, (r+view_num-1)%view_num, diff);
+                            dis.clear();
+                            if((cf+3*cs+a*syn_rl)>(2*cf+3*cs))
+                                data[i].cost.push_back(2*cf+3*cs);
+                            else
+                                data[i].cost.push_back(cf+3*cs+a*syn_rl);
+                        }
+                        if((1 == tmphit[0]) && (0 == tmphit[1]))
+                        {
+                            syn_rc = dibr_distance(i, r, diff);
+                            dis.clear();
+                            if((cf+3*cs+a*syn_rc)>(2*cf+3*cs))
+                                data[i].cost.push_back(2*cf+3*cs);
+                            else
+                                data[i].cost.push_back(cf+3*cs+a*syn_rc);
+                        }
+                        if((0 == tmphit[0]) && (0 == tmphit[1]))
+                        {
+                            cost1 = cf+3*cs+a*dibr_distance(i, (r+view_num-1)%view_num, diff)+a*dibr_distance(i, r, diff);
+                            dis.clear();
+                            dis.push_back((r+view_num-1)%view_num);
+                            dis.push_back(diff[0]);
+                            cost2 = 2*cf+3*cs+a*dibr_distance(i, r, dis);
+                            dis.clear();
+                            dis.push_back(r);
+                            dis.push_back(diff[0]);
+                            cost3 = 2*cf+3*cs+a*dibr_distance(i, (r+view_num-1)%view_num, dis);
+                            dis.clear();
+                            cost4 = 3*cf+3*cs;
+                            if((cost1<=cost2) && (cost1<=cost3) && (cost1<=cost4))
+                                data[i].cost.push_back(cost1);
+                            else if((cost2<=cost1) && (cost2<=cost3) && (cost2<=cost4))
+                                data[i].cost.push_back(cost2);
+                            else if((cost3<=cost1) && (cost3<=cost2) && (cost3<=cost4))
+                                data[i].cost.push_back(cost3);
+                            else if((cost4<=cost1) && (cost4<=cost2) && (cost4<=cost3))
+                                data[i].cost.push_back(cost4);
+                        }
+                        break;
+                    case 2:
+                        for(int j=1; j<=range_size; ++j)
+                            tmphit.push_back(check_cache(i, (i%view_num+view_num-j)%view_num, diff));
+                        for(int j=0; j<=range_size; ++j)
+                            tmphit.push_back(check_cache(i, (i%view_num+j)%view_num, diff));
+                        if((1 == tmphit[0]) && (1 == tmphit[1]))
+                        {
+                            data[i].cost.push_back(2*cf+3*cs);
+                        }
+                        if((0 == tmphit[0]) && (1 == tmphit[1]))
+                        {
+                            syn_rl = dibr_distance(i, (r+view_num-1)%view_num, diff);
+                            dis.clear();
+                            if((2*cf+3*cs+a*syn_rl)>(3*cf+3*cs))
+                                data[i].cost.push_back(3*cf+3*cs);
+                            else
+                                data[i].cost.push_back(2*cf+3*cs+a*syn_rl);
+                        }
+                        if((1 == tmphit[0]) && (0 == tmphit[1]))
+                        {
+                            syn_rc = dibr_distance(i, r, diff);
+                            dis.clear();
+                            if((2*cf+3*cs+a*syn_rc)>(3*cf+3*cs))
+                                data[i].cost.push_back(3*cf+3*cs);
+                            else
+                                data[i].cost.push_back(2*cf+3*cs+a*syn_rc);
+                        }
+                        if((0 == tmphit[0]) && (0 == tmphit[1]))
+                        {
+                            cost1 = 2*cf+3*cs+a*dibr_distance(i, (r+view_num-1)%view_num, diff)+a*dibr_distance(i, r, diff);
+                            dis.clear();
+                            dis.push_back(r);
+                            dis.push_back(diff[0]);
+                            dis.push_back(diff[1]);
+                            cost2 = 3*cf+3*cs+a*dibr_distance(i, (r+view_num-1)%view_num, dis);
+                            dis.clear();
+                            dis.push_back((r+view_num-1)%view_num);
+                            dis.push_back(diff[0]);
+                            dis.push_back(diff[1]);
+                            cost3 = 3*cf+3*cs+a*dibr_distance(i, r, dis);
+                            dis.clear();
+                            if((cost1<=cost2) && (cost1<=cost3))
+                                data[i].cost.push_back(cost1);
+                            else if((cost2<=cost1) && (cost2<=cost3))
+                                data[i].cost.push_back(cost2);
+                            else if((cost3<=cost1) && (cost3<=cost2))
+                                data[i].cost.push_back(cost3);
+                        }
+                        break;
+                    case 3:
+                        for(int j=1; j<=range_size; ++j)
+                            tmphit.push_back(check_cache(i, (i%view_num+view_num-j)%view_num, diff));
+                        for(int j=0; j<=range_size; ++j)
+                            tmphit.push_back(check_cache(i, (i%view_num+j)%view_num, diff));
+                        if((1 == tmphit[0]) && (1 == tmphit[1]))
+                        {
+                            data[i].cost.push_back(3*cf+3*cs);
+                        }
+                        if((0 == tmphit[0]) && (1 == tmphit[1]))
+                        {
+                            syn_rl = dibr_distance(i, (r+view_num-1)%view_num, diff);
+                            dis.clear();
+                            data[i].cost.push_back(3*cf+3*cs+a*syn_rl);
+                        }
+                        if((1 == tmphit[0]) && (0 == tmphit[1]))
+                        {
+                            syn_rc = dibr_distance(i, r, diff);
+                            dis.clear();
+                            data[i].cost.push_back(3*cf+3*cs+a*syn_rc);
+                        }
+                        if((0 == tmphit[0]) && (0 == tmphit[1]))
+                        {
+                            syn_rl = dibr_distance(i, (r+view_num-1)%view_num, diff);
+                            syn_rc = dibr_distance(i, r, diff);
+                            dis.clear();
+                            data[i].cost.push_back(3*cf+3*cs+a*syn_rl+a*syn_rc);
+                        }
+                        break;
+                    }
+                }
             }
             if(is_hit[0]==0 && is_hit[1]==0 && is_hit[2]==0)
             {
-
+                int r = i%view_num;
+                for(vector<int>::iterator it=data[i].neighborhood.begin(); it!=data[i].neighborhood.end(); ++it)
+                {
+                    vector<int> diff;
+                    vector<int> tmphit;
+                    vector<int> dis;
+                    dis.clear();
+                    compare(i, *it, diff);
+                    double syn_rl;
+                    double syn_rc;
+                    double syn_rr;
+                    double cost1;
+                    double cost2;
+                    double cost3;
+                    double cost4;
+                    double cost5;
+                    double cost6;
+                    double cost7;
+                    double cost8;
+                    switch(find_difference(i, *it))
+                    {
+                    case 0:
+                        dis.clear();
+                        cost1 = 3*cs+a*dibr_distance(i, (r+view_num-1)%view_num, dis)+a*dibr_distance(i, r, dis)+a*dibr_distance(i, (r+1)%view_num, dis);
+                        dis.clear();
+                        dis.push_back((r+1)%view_num);
+                        cost2 = cf+3*cs+a*dibr_distance(i, (r+view_num-1)%view_num, dis)+a*dibr_distance(i, r, dis);
+                        dis.clear();
+                        dis.push_back(r);
+                        cost3 = cf+3*cs+a*dibr_distance(i, (r+view_num-1)%view_num, dis)+a*dibr_distance(i, (r+1)%view_num, dis);
+                        dis.clear();
+                        dis.push_back((r+view_num-1)%view_num);
+                        cost4 = cf+3*cs+a*dibr_distance(i, r, dis)+a*dibr_distance(i, (r+1)%view_num, dis);
+                        dis.clear();
+                        dis.push_back(r);
+                        dis.push_back((r+1)%view_num);
+                        cost5 = 2*cf+3*cs+a*dibr_distance(i, (r+view_num-1)%view_num, dis);
+                        dis.clear();
+                        dis.push_back((r+view_num-1)%view_num);
+                        dis.push_back((r+1)%view_num);
+                        cost6 = 2*cf+3*cs+a*syn_rc;
+                        dis.clear();
+                        dis.push_back((r+view_num-1)%view_num);
+                        dis.push_back(r);
+                        cost7 = 2*cf+3*cs+a*syn_rr;
+                        dis.clear();
+                        cost8 = 3*cf+3*cs;
+                        if((cost1<=cost2) && (cost1<=cost3) && (cost1<=cost4) && (cost1<=cost5) && (cost1<=cost6) && (cost1<=cost7) && (cost1<=cost8))
+                            data[i].cost.push_back(cost1);
+                        else if((cost2<=cost1) && (cost2<=cost3) && (cost2<=cost4) && (cost2<=cost5) && (cost2<=cost6) && (cost2<=cost7) && (cost2<=cost8))
+                            data[i].cost.push_back(cost2);
+                        else if((cost3<=cost1) && (cost3<=cost2) && (cost3<=cost4) && (cost3<=cost5) && (cost3<=cost6) && (cost3<=cost7) && (cost3<=cost8))
+                            data[i].cost.push_back(cost3);
+                        else if((cost4<=cost1) && (cost4<=cost2) && (cost4<=cost3) && (cost4<=cost5) && (cost4<=cost6) && (cost4<=cost7) && (cost4<=cost8))
+                            data[i].cost.push_back(cost4);
+                        else if((cost5<=cost1) && (cost5<=cost2) && (cost5<=cost3) && (cost5<=cost4) && (cost5<=cost6) && (cost5<=cost7) && (cost5<=cost8))
+                            data[i].cost.push_back(cost5);
+                        else if((cost6<=cost1) && (cost6<=cost2) && (cost6<=cost3) && (cost6<=cost4) && (cost6<=cost5) && (cost6<=cost7) && (cost6<=cost8))
+                            data[i].cost.push_back(cost6);
+                        else if((cost7<=cost1) && (cost7<=cost2) && (cost7<=cost3) && (cost7<=cost4) && (cost7<=cost5) && (cost7<=cost6) && (cost7<=cost8))
+                            data[i].cost.push_back(cost7);
+                        else if((cost8<=cost1) && (cost8<=cost2) && (cost8<=cost3) && (cost8<=cost4) && (cost8<=cost5) && (cost8<=cost6) && (cost8<=cost7))
+                            data[i].cost.push_back(cost8);
+                        break;
+                    case 1:
+                        for(int j=1; j<=range_size; ++j)
+                            tmphit.push_back(check_cache(i, (i%view_num+view_num-j)%view_num, diff));
+                        for(int j=0; j<=range_size; ++j)
+                            tmphit.push_back(check_cache(i, (i%view_num+j)%view_num, diff));
+                        if((1 == tmphit[0]) && (0 == tmphit[1]) && (0 == tmphit[2]) )
+                        {
+                            cost1 = cf+3*cs+a*dibr_distance(i, (r+1)%view_num, diff)+a*dibr_distance(i, r, diff);
+                            dis.clear();
+                            dis.push_back((r+1)%view_num);
+                            dis.push_back(diff[0]);
+                            cost2 = 2*cf+3*cs+a*dibr_distance(i, r, dis);
+                            dis.clear();
+                            dis.push_back(r);
+                            dis.push_back(diff[0]);
+                            cost3 = 2*cf+3*cs+a*dibr_distance(i, (r+1)%view_num, dis);
+                            dis.clear();
+                            cost4 = 3*cf+3*cs;
+                            if((cost1<=cost2) && (cost1<=cost3) && (cost1<=cost4))
+                                data[i].cost.push_back(cost1);
+                            else if((cost2<=cost1) && (cost2<=cost3) && (cost2<=cost4))
+                                data[i].cost.push_back(cost2);
+                            else if((cost3<=cost1) && (cost3<=cost2) && (cost3<=cost4))
+                                data[i].cost.push_back(cost3);
+                            else if((cost4<=cost1) && (cost4<=cost2) && (cost4<=cost3))
+                                data[i].cost.push_back(cost4);
+                        }
+                        if((0 == tmphit[0]) && (1 == tmphit[1]) && (0 == tmphit[2]))
+                        {
+                            cost1 = cf+3*cs+a*dibr_distance(i, (r+1)%view_num, diff)+a*dibr_distance(i, (r+view_num-1)%view_num, diff);
+                            dis.clear();
+                            dis.push_back((r+1)%view_num);
+                            dis.push_back(diff[0]);
+                            cost2 = 2*cf+3*cs+a*dibr_distance(i, (r+view_num-1)%view_num, dis);
+                            dis.clear();
+                            dis.push_back((r+view_num-1)%view_num);
+                            dis.push_back(diff[0]);
+                            cost3 = 2*cf+3*cs+a*dibr_distance(i, (r+1)%view_num, dis);
+                            dis.clear();
+                            cost4 = 3*cf+3*cs;
+                            if((cost1<=cost2) && (cost1<=cost3) && (cost1<=cost4))
+                                data[i].cost.push_back(cost1);
+                            else if((cost2<=cost1) && (cost2<=cost3) && (cost2<=cost4))
+                                data[i].cost.push_back(cost2);
+                            else if((cost3<=cost1) && (cost3<=cost2) && (cost3<=cost4))
+                                data[i].cost.push_back(cost3);
+                            else if((cost4<=cost1) && (cost4<=cost2) && (cost4<=cost3))
+                                data[i].cost.push_back(cost4);
+                        }
+                        if((0 == tmphit[0]) && (0 == tmphit[1]) && (1 == tmphit[2]))
+                        {
+                            cost1 = cf+3*cs+a*dibr_distance(i, r, diff)+a*dibr_distance(i, (r+view_num-1)%view_num, diff);
+                            dis.clear();
+                            dis.push_back(r);
+                            dis.push_back(diff[0]);
+                            cost2 = 2*cf+3*cs+a*dibr_distance(i, (r+view_num-1)%view_num, dis);
+                            dis.clear();
+                            dis.push_back((r+view_num-1)%view_num);
+                            dis.push_back(diff[0]);
+                            cost3 = 2*cf+3*cs+a*dibr_distance(i, r, dis);
+                            dis.clear();
+                            cost4 = 3*cf+3*cs;
+                            if((cost1<=cost2) && (cost1<=cost3) && (cost1<=cost4))
+                                data[i].cost.push_back(cost1);
+                            else if((cost2<=cost1) && (cost2<=cost3) && (cost2<=cost4))
+                                data[i].cost.push_back(cost2);
+                            else if((cost3<=cost1) && (cost3<=cost2) && (cost3<=cost4))
+                                data[i].cost.push_back(cost3);
+                            else if((cost4<=cost1) && (cost4<=cost2) && (cost4<=cost3))
+                                data[i].cost.push_back(cost4);
+                        }
+                        if((0 == tmphit[0]) && (0 == tmphit[1]) && (0 == tmphit[2]))
+                        {
+                            cost1 = cf+3*cs+a*dibr_distance(i, (r+view_num-1)%view_num, diff)+a*dibr_distance(i, r, diff)+a*dibr_distance(i, (r+1)%view_num, diff);
+                            dis.clear();
+                            dis.push_back((r+1)%view_num);
+                            dis.push_back(diff[0]);
+                            cost2 = 2*cf+3*cs+a*dibr_distance(i, (r+view_num-1)%view_num, dis)+a*dibr_distance(i, r, dis);
+                            dis.clear();
+                            dis.push_back(r);
+                            dis.push_back(diff[0]);
+                            cost3 = 2*cf+3*cs+a*dibr_distance(i, (r+view_num-1)%view_num, dis)+a*dibr_distance(i, (r+1)%view_num, dis);
+                            dis.clear();
+                            dis.push_back((r+view_num-1)%view_num);
+                            dis.push_back(diff[0]);
+                            cost4 = 2*cf+3*cs+a*dibr_distance(i, r, dis)+a*dibr_distance(i, (r+1)%view_num, dis);
+                            dis.clear();
+                            dis.push_back(r);
+                            dis.push_back((r+1)%view_num);
+                            dis.push_back(diff[0]);
+                            cost5 = 3*cf+3*cs+a*dibr_distance(i, (r+view_num-1)%view_num, dis);
+                            dis.clear();
+                            dis.push_back((r+view_num-1)%view_num);
+                            dis.push_back((r+1)%view_num);
+                            dis.push_back(diff[0]);
+                            cost6 = 3*cf+3*cs+a*dibr_distance(i, r, dis);
+                            dis.push_back((r+view_num-1)%view_num);
+                            dis.push_back(r);
+                            dis.push_back(diff[0]);
+                            cost7 = 3*cf+3*cs+a*dibr_distance(i, (r+1)%view_num, dis);
+                            if((cost1<=cost2) && (cost1<=cost3) && (cost1<=cost4) && (cost1<=cost5) && (cost1<=cost6) && (cost1<=cost7) )
+                                data[i].cost.push_back(cost1);
+                            else if((cost2<=cost1) && (cost2<=cost3) && (cost2<=cost4) && (cost2<=cost5) && (cost2<=cost6) && (cost2<=cost7) )
+                                data[i].cost.push_back(cost2);
+                            else if((cost3<=cost1) && (cost3<=cost2) && (cost3<=cost4) && (cost3<=cost5) && (cost3<=cost6) && (cost3<=cost7) )
+                                data[i].cost.push_back(cost3);
+                            else if((cost4<=cost1) && (cost4<=cost2) && (cost4<=cost3) && (cost4<=cost5) && (cost4<=cost6) && (cost4<=cost7) )
+                                data[i].cost.push_back(cost4);
+                            else if((cost5<=cost1) && (cost5<=cost2) && (cost5<=cost3) && (cost5<=cost4) && (cost5<=cost6) && (cost5<=cost7) )
+                                data[i].cost.push_back(cost5);
+                            else if((cost6<=cost1) && (cost6<=cost2) && (cost6<=cost3) && (cost6<=cost4) && (cost6<=cost5) && (cost6<=cost7) )
+                                data[i].cost.push_back(cost6);
+                            else if((cost7<=cost1) && (cost7<=cost2) && (cost7<=cost3) && (cost7<=cost4) && (cost7<=cost5) && (cost7<=cost6) )
+                                data[i].cost.push_back(cost7);
+                        }
+                        break;
+                    case 2:
+                        for(int j=1; j<=range_size; ++j)
+                            tmphit.push_back(check_cache(i, (i%view_num+view_num-j)%view_num, diff));
+                        for(int j=0; j<=range_size; ++j)
+                            tmphit.push_back(check_cache(i, (i%view_num+j)%view_num, diff));
+                        if((1 == tmphit[0]) && (1 == tmphit[1]) && (0 == tmphit[2]))
+                        {
+                            syn_rr = dibr_distance(i, (r+1)%view_num, diff);
+                            dis.clear();
+                            if((2*cf+3*cs+a*syn_rr)>(3*cf+3*cs))
+                                data[i].cost.push_back(3*cf+3*cs);
+                            else
+                                data[i].cost.push_back(2*cf+3*cs+a*syn_rr);
+                        }
+                        if((1 == tmphit[0]) && (0 == tmphit[1]) && (1 == tmphit[2]))
+                        {
+                            syn_rc = dibr_distance(i, r, diff);
+                            dis.clear();
+                            if((2*cf+3*cs+a*syn_rc)>(3*cf+3*cs))
+                                data[i].cost.push_back(3*cf+3*cs);
+                            else
+                                data[i].cost.push_back(2*cf+3*cs+a*syn_rc);
+                        }
+                        if((1 == tmphit[0]) && (0 == tmphit[1]) && (0 == tmphit[2]))
+                        {
+                            cost1 = 2*cf+3*cs+a*dibr_distance(i, (r+1)%view_num, diff)+a*dibr_distance(i, r, diff);
+                            dis.clear();
+                            dis.push_back(r);
+                            dis.push_back(diff[0]);
+                            dis.push_back(diff[1]);
+                            cost2 = 3*cf+3*cs+a*dibr_distance(i, (r+1)%view_num, dis);
+                            dis.clear();
+                            dis.push_back((r+1)%view_num);
+                            dis.push_back(diff[0]);
+                            dis.push_back(diff[1]);
+                            cost3 = 3*cf+3*cs+a*dibr_distance(i, r, dis);
+                            dis.clear();
+                            if((cost1<=cost2) && (cost1<=cost3))
+                                data[i].cost.push_back(cost1);
+                            else if((cost2<=cost1) && (cost2<=cost3))
+                                data[i].cost.push_back(cost2);
+                            else if((cost3<=cost1) && (cost3<=cost2))
+                                data[i].cost.push_back(cost3);
+                        }
+                        if((0 == tmphit[0]) && (1 == tmphit[1]) && (1 == tmphit[2]))
+                        {
+                            syn_rl = dibr_distance(i, (r+view_num-1)%view_num, diff);
+                            dis.clear();
+                            if((2*cf+3*cs+a*syn_rl)>(3*cf+3*cs))
+                                data[i].cost.push_back(3*cf+3*cs);
+                            else
+                                data[i].cost.push_back(2*cf+3*cs+a*syn_rl);
+                        }
+                        if((0 == tmphit[0]) && (1 == tmphit[1]) && (0 == tmphit[2]))
+                        {
+                            cost1 = 2*cf+3*cs+a*dibr_distance(i, (r+1)%view_num, diff)+a*dibr_distance(i, (r+view_num-1)%view_num, diff);
+                            dis.clear();
+                            dis.push_back((r+view_num-1)%view_num);
+                            dis.push_back(diff[0]);
+                            dis.push_back(diff[1]);
+                            cost2 = 3*cf+3*cs+a*dibr_distance(i, (r+1)%view_num, dis);
+                            dis.clear();
+                            dis.push_back((r+1)%view_num);
+                            dis.push_back(diff[0]);
+                            dis.push_back(diff[1]);
+                            cost3 = 3*cf+3*cs+a*dibr_distance(i, (r+view_num-1)%view_num, dis);
+                            dis.clear();
+                            if((cost1<=cost2) && (cost1<=cost3))
+                                data[i].cost.push_back(cost1);
+                            else if((cost2<=cost1) && (cost2<=cost3))
+                                data[i].cost.push_back(cost2);
+                            else if((cost3<=cost1) && (cost3<=cost2))
+                                data[i].cost.push_back(cost3);
+                        }
+                        if((0 == tmphit[0]) && (0 == tmphit[1]) && (1 == tmphit[2]))
+                        {
+                            cost1 = 2*cf+3*cs+a*dibr_distance(i, r, diff)+a*dibr_distance(i, (r+view_num-1)%view_num, diff);
+                            dis.clear();
+                            dis.push_back((r+view_num-1)%view_num);
+                            dis.push_back(diff[0]);
+                            dis.push_back(diff[1]);
+                            cost2 = 3*cf+3*cs+a*dibr_distance(i, r, dis);
+                            dis.clear();
+                            dis.push_back(r);
+                            dis.push_back(diff[0]);
+                            dis.push_back(diff[1]);
+                            cost3 = 3*cf+3*cs+a*dibr_distance(i, (r+view_num-1)%view_num, dis);
+                            dis.clear();
+                            if((cost1<=cost2) && (cost1<=cost3))
+                                data[i].cost.push_back(cost1);
+                            else if((cost2<=cost1) && (cost2<=cost3))
+                                data[i].cost.push_back(cost2);
+                            else if((cost3<=cost1) && (cost3<=cost2))
+                                data[i].cost.push_back(cost3);
+                        }
+                        if((0 == tmphit[0]) && (0 == tmphit[1]) && (0 == tmphit[2]))
+                        {
+                            cost1 = 2*cf+3*cs+a*dibr_distance(i, r, diff)+a*dibr_distance(i, (r+view_num-1)%view_num, diff)+a*dibr_distance(i, (r+1)%view_num, diff);
+                            dis.clear();
+                            dis.push_back((r+1)%view_num);
+                            dis.push_back(diff[0]);
+                            dis.push_back(diff[1]);
+                            cost2 = 3*cf+3*cs+a*dibr_distance(i, (r+view_num-1)%view_num, dis)+a*dibr_distance(i, r, dis);
+                            dis.clear();
+                            dis.push_back(r);
+                            dis.push_back(diff[0]);
+                            dis.push_back(diff[1]);
+                            cost3 = 3*cf+3*cs+a*dibr_distance(i, (r+view_num-1)%view_num, dis)+a*dibr_distance(i, (r+1)%view_num, dis);
+                            dis.clear();
+                            dis.push_back((r+view_num-1)%view_num);
+                            dis.push_back(diff[0]);
+                            dis.push_back(diff[1]);
+                            cost4 = 3*cf+3*cs+a*dibr_distance(i, r, dis)+a*dibr_distance(i, (r+1)%view_num, dis);
+                            dis.clear();
+                            if((cost1<=cost2) && (cost1<=cost3) && (cost1<=cost4))
+                                data[i].cost.push_back(cost1);
+                            else if((cost2<=cost1) && (cost2<=cost3) && (cost2<=cost4))
+                                data[i].cost.push_back(cost2);
+                            else if((cost3<=cost1) && (cost3<=cost2) && (cost3<=cost4))
+                                data[i].cost.push_back(cost3);
+                            else if((cost4<=cost1) && (cost4<=cost2) && (cost4<=cost3))
+                                data[i].cost.push_back(cost4);
+                        }
+                        break;
+                    case 3:
+                        for(int j=1; j<=range_size; ++j)
+                            tmphit.push_back(check_cache(i, (i%view_num+view_num-j)%view_num, diff));
+                        for(int j=0; j<=range_size; ++j)
+                            tmphit.push_back(check_cache(i, (i%view_num+j)%view_num, diff));
+                        if((1 == tmphit[0]) && (1 == tmphit[1]) && (1 == tmphit[2]))
+                        {
+                            data[i].cost.push_back(3*cf+3*cs);
+                        }
+                        if((1 == tmphit[0]) && (1 == tmphit[1]) && (0 == tmphit[2]))
+                        {
+                            syn_rr = dibr_distance(i, (r+1)%view_num, diff);
+                            dis.clear();
+                            data[i].cost.push_back(3*cf+3*cs+a*syn_rr);
+                        }
+                        if((1 == tmphit[0]) && (0 == tmphit[1]) && (1 == tmphit[2]))
+                        {
+                            syn_rc = dibr_distance(i, r, diff);
+                            dis.clear();
+                            data[i].cost.push_back(3*cf+3*cs+a*syn_rc);
+                        }
+                        if((1 == tmphit[0]) && (0 == tmphit[1]) && (0 == tmphit[2]))
+                        {
+                            syn_rc = dibr_distance(i, r, diff);
+                            syn_rr = dibr_distance(i, (r+1)%view_num, diff);
+                            dis.clear();
+                            data[i].cost.push_back(3*cf+3*cs+a*syn_rr+a*syn_rc);
+                        }
+                        if((0 == tmphit[0]) && (1 == tmphit[1]) && (1 == tmphit[2]))
+                        {
+                            syn_rl = dibr_distance(i, (r+view_num-1)%view_num, diff);
+                            dis.clear();
+                            data[i].cost.push_back(3*cf+3*cs+a*syn_rl);
+                        }
+                        if((0 == tmphit[0]) && (1 == tmphit[1]) && (0 == tmphit[2]))
+                        {
+                            syn_rl = dibr_distance(i, (r+view_num-1)%view_num, diff);
+                            syn_rr = dibr_distance(i, (r+1)%view_num, diff);
+                            dis.clear();
+                            data[i].cost.push_back(3*cf+3*cs+a*syn_rr+a*syn_rl);
+                        }
+                        if((0 == tmphit[0]) && (0 == tmphit[1]) && (1 == tmphit[2]))
+                        {
+                            syn_rl = dibr_distance(i, (r+view_num-1)%view_num, diff);
+                            syn_rc = dibr_distance(i, r, diff);
+                            dis.clear();
+                            data[i].cost.push_back(3*cf+3*cs+a*syn_rc+a*syn_rl);
+                        }
+                        if((0 == tmphit[0]) && (0 == tmphit[1]) && (0 == tmphit[2]))
+                        {
+                            syn_rl = dibr_distance(i, (r+view_num-1)%view_num, diff);
+                            syn_rc = dibr_distance(i, r, diff);
+                            syn_rr = dibr_distance(i, (r+1)%view_num, diff);
+                            dis.clear();
+                            data[i].cost.push_back(3*cf+3*cs+a*syn_rl+a*syn_rc+a*syn_rr);
+                        }
+                        break;
+                    }
+                }
             }
 
 
             if(is_hit[0]==-1 && is_hit[1]==1 && is_hit[2]==1)
             {
-
+                int r = i%view_num;
+                for(vector<int>::iterator it=data[i].neighborhood.begin(); it!=data[i].neighborhood.end(); ++it)
+                {
+                    vector<int> diff;
+                    vector<int> tmphit;
+                    vector<int> dis;
+                    dis.clear();
+                    compare(i, *it, diff);
+                    double syn_rl;
+                    double syn_rc;
+                    double syn_rr;
+                    switch(find_difference(i, *it))
+                    {
+                    case 0:
+                        data[i].cost.push_back(cf+3*cs);
+                        break;
+                    case 1:
+                        for(int j=1; j<=range_size; ++j)
+                            tmphit.push_back(check_cache(i, (i%view_num+view_num-j)%view_num, diff));
+                        for(int j=0; j<=range_size; ++j)
+                            tmphit.push_back(check_cache(i, (i%view_num+j)%view_num, diff));
+                        if(1 == tmphit[0])
+                        {
+                            data[i].cost.push_back(cf+3*cs);
+                        }
+                        if(0 == tmphit[0])
+                        {
+                            syn_rl = dibr_distance(i, (r+view_num-1)%view_num, diff);
+                            dis.clear();
+                            if((cf+3*cs+a*syn_rl)>(2*cf+3*cs))
+                                data[i].cost.push_back(2*cf+3*cs);
+                            else
+                                data[i].cost.push_back(cf+3*cs+a*syn_rl);
+                        }
+                        if(-1 == tmphit[0])
+                        {
+                            data[i].cost.push_back(2*cf+3*cs);
+                        }
+                        break;
+                    case 2:
+                        for(int j=1; j<=range_size; ++j)
+                            tmphit.push_back(check_cache(i, (i%view_num+view_num-j)%view_num, diff));
+                        for(int j=0; j<=range_size; ++j)
+                            tmphit.push_back(check_cache(i, (i%view_num+j)%view_num, diff));
+                        if(1 == tmphit[0])
+                        {
+                            data[i].cost.push_back(2*cf+3*cs);
+                        }
+                        if(0 == tmphit[0])
+                        {
+                            syn_rl = dibr_distance(i, (r+view_num-1)%view_num, diff);
+                            dis.clear();
+                            if((2*cf+3*cs+a*syn_rl)>(3*cf+3*cs))
+                                data[i].cost.push_back(3*cf+3*cs);
+                            else
+                                data[i].cost.push_back(2*cf+3*cs+a*syn_rl);
+                        }
+                        if(-1 == tmphit[0])
+                        {
+                            data[i].cost.push_back(3*cf+3*cs);
+                        }
+                        break;
+                    case 3:
+                        for(int j=1; j<=range_size; ++j)
+                            tmphit.push_back(check_cache(i, (i%view_num+view_num-j)%view_num, diff));
+                        for(int j=0; j<=range_size; ++j)
+                            tmphit.push_back(check_cache(i, (i%view_num+j)%view_num, diff));
+                        if(1 == tmphit[0])
+                        {
+                            data[i].cost.push_back(3*cf+3*cs);
+                        }
+                        if(0 == tmphit[0])
+                        {
+                            syn_rl = dibr_distance(i, (r+view_num-1)%view_num, diff);
+                            dis.clear();
+                            data[i].cost.push_back(3*cf+3*cs+a*syn_rl);
+                        }
+                        break;
+                    }
+                }
             }
             if(is_hit[0]==-1 && is_hit[1]==1 && is_hit[2]==0)
             {
-
+                int r = i%view_num;
+                for(vector<int>::iterator it=data[i].neighborhood.begin(); it!=data[i].neighborhood.end(); ++it)
+                {
+                    vector<int> diff;
+                    vector<int> tmphit;
+                    vector<int> dis;
+                    dis.clear();
+                    compare(i, *it, diff);
+                    double syn_rl;
+                    double syn_rc;
+                    double syn_rr;
+                    double cost1;
+                    double cost2;
+                    double cost3;
+                    double cost4;
+                    switch(find_difference(i, *it))
+                    {
+                    case 0:
+                        dis.clear();
+                        dis.push_back((r+view_num-1)%view_num);
+                        syn_rr = dibr_distance(i, (r+1)%view_num, dis);
+                        dis.clear();
+                        if((cf+3*cs+a*syn_rr)>(2*cf+3*cs))
+                            data[i].cost.push_back(2*cf+3*cs);
+                        else
+                            data[i].cost.push_back(cf+3*cs+a*syn_rr);
+                        break;
+                    case 1:
+                        for(int j=1; j<=range_size; ++j)
+                            tmphit.push_back(check_cache(i, (i%view_num+view_num-j)%view_num, diff));
+                        for(int j=0; j<=range_size; ++j)
+                            tmphit.push_back(check_cache(i, (i%view_num+j)%view_num, diff));
+                        if((-1 == tmphit[0]) && (1 == tmphit[2]) )
+                        {
+                            data[i].cost.push_back(2*cf+3*cs);
+                        }
+                        if((1 == tmphit[0]) && (0 == tmphit[2]))
+                        {
+                            syn_rr = dibr_distance(i, (r+1)%view_num, diff);
+                            dis.clear();
+                            if((cf+3*cs+a*syn_rr)>(2*cf+3*cs))
+                                data[i].cost.push_back(2*cf+3*cs);
+                            else
+                                data[i].cost.push_back(cf+3*cs+a*syn_rr);
+                        }
+                        if((0 == tmphit[0]) && (0 == tmphit[2]))
+                        {
+                            cost1 = cf+3*cs+a*dibr_distance(i, (r+1)%view_num, diff)+a*dibr_distance(i, (r+view_num-1)%view_num, diff);
+                            dis.clear();
+                            dis.push_back((r+1)%view_num);
+                            dis.push_back(diff[0]);
+                            cost2 = 2*cf+3*cs+a*dibr_distance(i, (r+view_num-1)%view_num, dis);
+                            dis.clear();
+                            dis.push_back((r+view_num-1)%view_num);
+                            dis.push_back(diff[0]);
+                            cost3 = 2*cf+3*cs+a*dibr_distance(i, (r+1)%view_num, dis);
+                            dis.clear();
+                            cost4 = 3*cf+3*cs;
+                            if((cost1<=cost2) && (cost1<=cost3) && (cost1<=cost4))
+                                data[i].cost.push_back(cost1);
+                            else if((cost2<=cost1) && (cost2<=cost3) && (cost2<=cost4))
+                                data[i].cost.push_back(cost2);
+                            else if((cost3<=cost1) && (cost3<=cost2) && (cost3<=cost4))
+                                data[i].cost.push_back(cost3);
+                            else if((cost4<=cost1) && (cost4<=cost2) && (cost4<=cost3))
+                                data[i].cost.push_back(cost4);
+                        }
+                        if((-1 == tmphit[0]) && (0 == tmphit[2]))
+                        {
+                            dis.clear();
+                            dis.push_back((r+view_num-1)%view_num);
+                            dis.push_back(diff[0]);
+                            syn_rr = dibr_distance(i, (r+1)%view_num, dis);
+                            dis.clear();
+                            if((2*cf+3*cs+a*syn_rr)>(3*cf+3*cs))
+                                data[i].cost.push_back(3*cf+3*cs);
+                            else
+                                data[i].cost.push_back(2*cf+3*cs+a*syn_rr);
+                        }
+                        break;
+                    case 2:
+                        for(int j=1; j<=range_size; ++j)
+                            tmphit.push_back(check_cache(i, (i%view_num+view_num-j)%view_num, diff));
+                        for(int j=0; j<=range_size; ++j)
+                            tmphit.push_back(check_cache(i, (i%view_num+j)%view_num, diff));
+                        if((1 == tmphit[0]) && (1 == tmphit[2]))
+                        {
+                            data[i].cost.push_back(2*cf+3*cs);
+                        }
+                        if((0 == tmphit[0]) && (1 == tmphit[2]))
+                        {
+                            syn_rl = dibr_distance(i, (r+view_num-1)%view_num, diff);
+                            dis.clear();
+                            if((2*cf+3*cs+a*syn_rl)>(3*cf+3*cs))
+                                data[i].cost.push_back(3*cf+3*cs);
+                            else
+                                data[i].cost.push_back(2*cf+3*cs+a*syn_rl);
+                        }
+                        if((-1 == tmphit[0]) && (1 == tmphit[2]))
+                        {
+                            data[i].cost.push_back(3*cf+3*cs);
+                        }
+                        if((1 == tmphit[0]) && (0 == tmphit[2]))
+                        {
+                            syn_rr = dibr_distance(i, (r+1)%view_num, diff);
+                            dis.clear();
+                            if((2*cf+3*cs+a*syn_rr)>(3*cf+3*cs))
+                                data[i].cost.push_back(3*cf+3*cs);
+                            else
+                                data[i].cost.push_back(2*cf+3*cs+a*syn_rr);
+                        }
+                        if((0 == tmphit[0]) && (0 == tmphit[2]))
+                        {
+                            cost1 = 2*cf+3*cs+a*dibr_distance(i, (r+1)%view_num, diff)+a*dibr_distance(i, (r+view_num-1)%view_num, diff);
+                            dis.clear();
+                            dis.push_back((r+view_num-1)%view_num);
+                            dis.push_back(diff[0]);
+                            dis.push_back(diff[1]);
+                            cost2 = 3*cf+3*cs+a*dibr_distance(i, (r+1)%view_num, dis);
+                            dis.clear();
+                            dis.push_back((r+1)%view_num);
+                            dis.push_back(diff[0]);
+                            dis.push_back(diff[1]);
+                            cost3 = 3*cf+3*cs+a*dibr_distance(i, (r+view_num-1)%view_num, dis);
+                            dis.clear();
+                            if((cost1<=cost2) && (cost1<=cost3))
+                                data[i].cost.push_back(cost1);
+                            else if((cost2<=cost1) && (cost2<=cost3))
+                                data[i].cost.push_back(cost2);
+                            else if((cost3<=cost1) && (cost3<=cost2))
+                                data[i].cost.push_back(cost3);
+                        }
+                        if((-1 == tmphit[0]) && (0 == tmphit[2]))
+                        {
+                            dis.clear();
+                            dis.push_back((r+view_num-1)%view_num);
+                            dis.push_back(diff[0]);
+                            dis.push_back(diff[1]);
+                            syn_rr = dibr_distance(i, (r+1)%view_num, dis);
+                            dis.clear();
+                            data[i].cost.push_back(2*cf+3*cs+a*syn_rr);
+                        }
+                        break;
+                    case 3:
+                        for(int j=1; j<=range_size; ++j)
+                            tmphit.push_back(check_cache(i, (i%view_num+view_num-j)%view_num, diff));
+                        for(int j=0; j<=range_size; ++j)
+                            tmphit.push_back(check_cache(i, (i%view_num+j)%view_num, diff));
+                        if((1 == tmphit[0]) && (1 == tmphit[2]))
+                        {
+                            data[i].cost.push_back(3*cf+3*cs);
+                        }
+                        if((0 == tmphit[0]) && (1 == tmphit[2]))
+                        {
+                            syn_rl = dibr_distance(i, (r+view_num-1)%view_num, diff);
+                            dis.clear();
+                            data[i].cost.push_back(3*cf+3*cs+a*syn_rl);
+                        }
+                        if((1 == tmphit[0]) && (0 == tmphit[2]))
+                        {
+                            syn_rr = dibr_distance(i, (r+1)%view_num, diff);
+                            dis.clear();
+                            data[i].cost.push_back(3*cf+3*cs+a*syn_rr);
+                        }
+                        if((0 == tmphit[0]) && (0 == tmphit[2]))
+                        {
+                            syn_rl = dibr_distance(i, (r+view_num-1)%view_num, diff);
+                            syn_rr = dibr_distance(i, (r+1)%view_num, diff);
+                            dis.clear();
+                            data[i].cost.push_back(3*cf+3*cs+a*syn_rr+a*syn_rl);
+                        }
+                        break;
+                    }
+                }
             }
             if(is_hit[0]==-1 && is_hit[1]==1 && is_hit[2]==-1)
             {
+                int r = i%view_num;
+                for(vector<int>::iterator it=data[i].neighborhood.begin(); it!=data[i].neighborhood.end(); ++it)
+                {
+                    vector<int> diff;
+                    vector<int> tmphit;
+                    vector<int> dis;
+                    dis.clear();
+                    compare(i, *it, diff);
+                    double syn_rl;
+                    double syn_rc;
+                    double syn_rr;
+                    double cost1;
+                    double cost2;
+                    double cost3;
+                    switch(find_difference(i, *it))
+                    {
+                    case 0:
+                        data[i].cost.push_back(2*cf+3*cs);
+                        break;
+                    case 1:
+                        for(int j=1; j<=range_size; ++j)
+                            tmphit.push_back(check_cache(i, (i%view_num+view_num-j)%view_num, diff));
+                        for(int j=0; j<=range_size; ++j)
+                            tmphit.push_back(check_cache(i, (i%view_num+j)%view_num, diff));
+                        if((1 == tmphit[0]) && (-1 == tmphit[2]) )
+                        {
+                            data[i].cost.push_back(2*cf+3*cs);
+                        }
+                        if((0 == tmphit[0]) && (-1 == tmphit[2]))
+                        {
+                            dis.clear();
+                            dis.push_back((r+1)%view_num);
+                            dis.push_back(diff[0]);
+                            syn_rl = dibr_distance(i, (r+view_num-1)%view_num, dis);
+                            dis.clear();
+                            if((2*cf+3*cs+a*syn_rl)>(3*cf+3*cs))
+                                data[i].cost.push_back(3*cf+3*cs);
+                            else
+                                data[i].cost.push_back(2*cf+3*cs+a*syn_rl);
+                        }
+                        if((-1 == tmphit[0]) && (1 == tmphit[2]))
+                        {
+                            data[i].cost.push_back(2*cf+3*cs);
+                        }
+                        if((-1 == tmphit[0]) && (0 == tmphit[2]))
+                        {
+                            dis.clear();
+                            dis.push_back((r+view_num-1)%view_num);
+                            dis.push_back(diff[0]);
+                            syn_rr = dibr_distance(i, (r+1)%view_num, dis);
+                            dis.clear();
+                            if((2*cf+3*cs+a*syn_rr)>(3*cf+3*cs))
+                                data[i].cost.push_back(3*cf+3*cs);
+                            else
+                                data[i].cost.push_back(2*cf+3*cs+a*syn_rr);
+                        }
+                        if((-1 == tmphit[0]) && (-1 == tmphit[2]))
+                        {
+                            data[i].cost.push_back(3*cf+3*cs);
+                        }
+                        break;
+                    case 2:
+                        for(int j=1; j<=range_size; ++j)
+                            tmphit.push_back(check_cache(i, (i%view_num+view_num-j)%view_num, diff));
+                        for(int j=0; j<=range_size; ++j)
+                            tmphit.push_back(check_cache(i, (i%view_num+j)%view_num, diff));
+                        if((1 == tmphit[0]) && (1 == tmphit[2]))
+                        {
+                            data[i].cost.push_back(2*cf+3*cs);
+                        }
+                        if((1 == tmphit[0]) && (0 == tmphit[2]))
+                        {
+                            syn_rr = dibr_distance(i, (r+1)%view_num, diff);
+                            dis.clear();
+                            if((2*cf+3*cs+a*syn_rr)>(3*cf+3*cs))
+                                data[i].cost.push_back(3*cf+3*cs);
+                            else
+                                data[i].cost.push_back(2*cf+3*cs+a*syn_rr);
+                        }
+                        if((1 == tmphit[0]) && (-1 == tmphit[2]))
+                        {
+                            data[i].cost.push_back(3*cf+3*cs);
+                        }
+                        if((0 == tmphit[0]) && (1 == tmphit[2]))
+                        {
+                            syn_rl = dibr_distance(i, (r+view_num-1)%view_num, diff);
+                            dis.clear();
+                            if((2*cf+3*cs+a*syn_rl)>(3*cf+3*cs))
+                                data[i].cost.push_back(3*cf+3*cs);
+                            else
+                                data[i].cost.push_back(2*cf+3*cs+a*syn_rl);
+                        }
+                        if((0 == tmphit[0]) && (0 == tmphit[2]))
+                        {
+                            cost1 = 2*cf+3*cs+a*dibr_distance(i, (r+1)%view_num, diff)+a*dibr_distance(i, (r+view_num-1)%view_num, diff);
+                            dis.clear();
+                            dis.push_back((r+view_num-1)%view_num);
+                            dis.push_back(diff[0]);
+                            dis.push_back(diff[1]);
+                            cost2 = 3*cf+3*cs+a*dibr_distance(i, (r+1)%view_num, dis);
+                            dis.clear();
+                            dis.push_back((r+1)%view_num);
+                            dis.push_back(diff[0]);
+                            dis.push_back(diff[1]);
+                            cost3 = 3*cf+3*cs+a*dibr_distance(i, (r+view_num-1)%view_num, dis);
+                            dis.clear();
+                            if((cost1<=cost2) && (cost1<=cost3))
+                                data[i].cost.push_back(cost1);
+                            else if((cost2<=cost1) && (cost2<=cost3))
+                                data[i].cost.push_back(cost2);
+                            else if((cost3<=cost1) && (cost3<=cost2))
+                                data[i].cost.push_back(cost3);
+                        }
+                        if((0 == tmphit[0]) && (-1 == tmphit[2]))
+                        {
 
+                            dis.clear();
+                            dis.push_back((r+1)%view_num);
+                            dis.push_back(diff[0]);
+                            dis.push_back(diff[1]);
+                            syn_rl = dibr_distance(i, (r+view_num-1)%view_num, dis);
+                            dis.clear();
+                            data[i].cost.push_back(3*cf+3*cs+a*syn_rl);
+                        }
+                        if((-1 == tmphit[0]) && (1 == tmphit[2]))
+                        {
+                            data[i].cost.push_back(3*cf+3*cs);
+                        }
+                        if((-1 == tmphit[0]) && (0 == tmphit[2]))
+                        {
+                            dis.clear();
+                            dis.push_back((r+view_num-1)%view_num);
+                            dis.push_back(diff[0]);
+                            dis.push_back(diff[1]);
+                            syn_rr = dibr_distance(i, (r+1)%view_num, dis);
+                            dis.clear();
+                            data[i].cost.push_back(3*cf+3*cs+a*syn_rr);
+                        }
+                        break;
+                    case 3:
+                        for(int j=1; j<=range_size; ++j)
+                            tmphit.push_back(check_cache(i, (i%view_num+view_num-j)%view_num, diff));
+                        for(int j=0; j<=range_size; ++j)
+                            tmphit.push_back(check_cache(i, (i%view_num+j)%view_num, diff));
+                        if((1 == tmphit[0]) && (1 == tmphit[2]))
+                        {
+                            data[i].cost.push_back(3*cf+3*cs);
+                        }
+                        if((1 == tmphit[0]) && (0 == tmphit[2]))
+                        {
+                            syn_rr = dibr_distance(i, (r+1)%view_num, diff);
+                            dis.clear();
+                            data[i].cost.push_back(3*cf+3*cs+a*syn_rr);
+                        }
+                        if((0 == tmphit[0]) && (1 == tmphit[2]))
+                        {
+                            syn_rl = dibr_distance(i, (r+view_num-1)%view_num, diff);
+                            dis.clear();
+                            data[i].cost.push_back(3*cf+3*cs+a*syn_rl);
+                        }
+                        if((0 == tmphit[0]) && (0 == tmphit[2]))
+                        {
+                            syn_rl = dibr_distance(i, (r+view_num-1)%view_num, diff);
+                            dis.clear();
+                            data[i].cost.push_back(3*cf+3*cs+a*syn_rr+a*syn_rl);
+                        }
+                        break;
+                    }
+                }
             }
 
             if(is_hit[0]==-1 && is_hit[1]==-1 && is_hit[2]==1)
             {
+                int r = i%view_num;
+                for(vector<int>::iterator it=data[i].neighborhood.begin(); it!=data[i].neighborhood.end(); ++it)
+                {
+                    vector<int> diff;
+                    vector<int> tmphit;
+                    vector<int> dis;
+                    dis.clear();
+                    compare(i, *it, diff);
+                    double syn_rl;
+                    double syn_rc;
+                    double syn_rr;
+                    double cost1 = cf+3*cs+a*syn_rr+a*syn_rc;
+                    double cost2 = 2*cf+3*cs+a*syn_rc;
+                    double cost3 = 2*cf+3*cs+a*syn_rr;
+                    double cost4 = 3*cf+3*cs;
+                    switch(find_difference(i, *it))
+                    {
+                    case 0:
+                        data[i].cost.push_back(2*cf+3*cs);
+                        break;
+                    case 1:
+                        for(int j=1; j<=range_size; ++j)
+                            tmphit.push_back(check_cache(i, (i%view_num+view_num-j)%view_num, diff));
+                        for(int j=0; j<=range_size; ++j)
+                            tmphit.push_back(check_cache(i, (i%view_num+j)%view_num, diff));
+                        if((-1 == tmphit[0]) && (1 == tmphit[1]) )
+                        {
+                            data[i].cost.push_back(2*cf+3*cs);
+                        }
+                        if((0 == tmphit[0]) && (1 == tmphit[1]))
+                        {
+                            syn_rl = dibr_distance(i, (r+view_num-1)%view_num, diff);
+                            dis.clear();
+                            if((cf+3*cs+a*syn_rl)>(2*cf+3*cs))
+                                data[i].cost.push_back(2*cf+3*cs);
+                            else
+                                data[i].cost.push_back(cf+3*cs+a*syn_rl);
+                        }
+                        if((1 == tmphit[0]) && (0 == tmphit[1]))
+                        {
+                            syn_rc = dibr_distance(i, r, diff);
+                            dis.clear();
+                            if((cf+3*cs+a*syn_rc)>(2*cf+3*cs))
+                                data[i].cost.push_back(2*cf+3*cs);
+                            else
+                                data[i].cost.push_back(cf+3*cs+a*syn_rc);
 
+                        }
+                        if((0 == tmphit[0]) && (0 == tmphit[1]))
+                        {
+                            cost1 = cf+3*cs+a*dibr_distance(i, (r+view_num-1)%view_num, diff)+a*dibr_distance(i, r, diff);
+                            dis.clear();
+                            dis.push_back((r+view_num-1)%view_num);
+                            dis.push_back(diff[0]);
+                            cost2 = 2*cf+3*cs+a*dibr_distance(i, r, dis);
+                            dis.clear();
+                            dis.push_back(r);
+                            dis.push_back(diff[0]);
+                            cost3 = 2*cf+3*cs+a*dibr_distance(i, (r+view_num-1)%view_num, dis);
+                            dis.clear();
+                            cost4 = 3*cf+3*cs;
+                            if((cost1<=cost2) && (cost1<=cost3) && (cost1<=cost4))
+                                data[i].cost.push_back(cost1);
+                            else if((cost2<=cost1) && (cost2<=cost3) && (cost2<=cost4))
+                                data[i].cost.push_back(cost2);
+                            else if((cost3<=cost1) && (cost3<=cost2) && (cost3<=cost4))
+                                data[i].cost.push_back(cost3);
+                            else if((cost4<=cost1) && (cost4<=cost2) && (cost4<=cost3))
+                                data[i].cost.push_back(cost4);
+                        }
+                        if((-1 == tmphit[0]) && (-1 == tmphit[1]) )
+                        {
+                            data[i].cost.push_back(3*cf+3*cs);
+                        }
+                        break;
+                    case 2:
+                        for(int j=1; j<=range_size; ++j)
+                            tmphit.push_back(check_cache(i, (i%view_num+view_num-j)%view_num, diff));
+                        for(int j=0; j<=range_size; ++j)
+                            tmphit.push_back(check_cache(i, (i%view_num+j)%view_num, diff));
+                        if((1 == tmphit[0]) && (1 == tmphit[1]))
+                        {
+                            data[i].cost.push_back(2*cf+3*cs);
+                        }
+                        if((0 == tmphit[0]) && (1 == tmphit[1]))
+                        {
+                            syn_rl = dibr_distance(i, (r+view_num-1)%view_num, diff);
+                            dis.clear();
+                            if((2*cf+3*cs+a*syn_rl)>(3*cf+3*cs))
+                                data[i].cost.push_back(3*cf+3*cs);
+                            else
+                                data[i].cost.push_back(2*cf+3*cs+a*syn_rl);
+                        }
+                        if((-1 == tmphit[0]) && (1 == tmphit[1]))
+                        {
+                            data[i].cost.push_back(3*cf+3*cs);
+                        }
+                        if((1 == tmphit[0]) && (0 == tmphit[1]))
+                        {
+                            syn_rc = dibr_distance(i, r, diff);
+                            dis.clear();
+                            if((2*cf+3*cs+a*syn_rc)>(3*cf+3*cs))
+                                data[i].cost.push_back(3*cf+3*cs);
+                            else
+                                data[i].cost.push_back(2*cf+3*cs+a*syn_rc);
+                        }
+                        if((0 == tmphit[0]) && (0 == tmphit[1]))
+                        {
+                            cost1 = 2*cf+3*cs+a*dibr_distance(i, (r+view_num-1)%view_num, diff)+a*dibr_distance(i, r, diff);
+                            dis.clear();
+                            dis.push_back(r);
+                            dis.push_back(diff[0]);
+                            dis.push_back(diff[1]);
+                            cost2 = 3*cf+3*cs+a*dibr_distance(i, (r+view_num-1)%view_num, dis);
+                            dis.clear();
+                            dis.push_back((r+1)%view_num);
+                            dis.push_back(diff[0]);
+                            dis.push_back(diff[1]);
+                            cost3 = 3*cf+3*cs+a*dibr_distance(i, r, dis);
+                            dis.clear();
+                            if((cost1<=cost2) && (cost1<=cost3))
+                                data[i].cost.push_back(cost1);
+                            else if((cost2<=cost1) && (cost2<=cost3))
+                                data[i].cost.push_back(cost2);
+                            else if((cost3<=cost1) && (cost3<=cost2))
+                                data[i].cost.push_back(cost3);
+                        }
+                        if((-1 == tmphit[0]) && (-1 == tmphit[1]))
+                        {
+                            dis.clear();
+                            dis.push_back((r+view_num-1)%view_num);
+                            dis.push_back(diff[0]);
+                            dis.push_back(diff[1]);
+                            syn_rc = dibr_distance(i, r, dis);
+                            dis.clear();
+                            data[i].cost.push_back(3*cf+3*cs+a*syn_rc);
+                        }
+                        break;
+                    case 3:
+                        for(int j=1; j<=range_size; ++j)
+                            tmphit.push_back(check_cache(i, (i%view_num+view_num-j)%view_num, diff));
+                        for(int j=0; j<=range_size; ++j)
+                            tmphit.push_back(check_cache(i, (i%view_num+j)%view_num, diff));
+                        if((1 == tmphit[0]) && (1 == tmphit[1]))
+                        {
+                            data[i].cost.push_back(3*cf+3*cs);
+                        }
+                        if((0 == tmphit[0]) && (1 == tmphit[1]))
+                        {
+                            syn_rl = dibr_distance(i, (r+view_num-1)%view_num, diff);
+                            dis.clear();
+                            data[i].cost.push_back(3*cf+3*cs+a*syn_rl);
+                        }
+                        if((1 == tmphit[0]) && (0 == tmphit[1]))
+                        {
+                            syn_rc = dibr_distance(i, r, diff);
+                            dis.clear();
+                            data[i].cost.push_back(3*cf+3*cs+a*syn_rc);
+                        }
+                        if((0 == tmphit[0]) && (0 == tmphit[1]))
+                        {
+                            syn_rl = dibr_distance(i, (r+view_num-1)%view_num, diff);
+                            syn_rc = dibr_distance(i, r, diff);
+                            dis.clear();
+                            data[i].cost.push_back(3*cf+3*cs+a*syn_rl+a*syn_rc);
+                        }
+                        break;
+                    }
+                }
             }
             if(is_hit[0]==-1 && is_hit[1]==-1 && is_hit[2]==-1)
             {
+                int r = i%view_num;
+                for(vector<int>::iterator it=data[i].neighborhood.begin(); it!=data[i].neighborhood.end(); ++it)
+                {
+                    vector<int> diff;
+                    vector<int> tmphit;
+                    vector<int> dis;
+                    dis.clear();
+                    compare(i, *it, diff);
+                    double syn_rl;
+                    double syn_rc;
+                    double syn_rr;
+                    double cost1;
+                    double cost2;
+                    double cost3;
+                    double cost4;
+                    double cost5;
+                    double cost6;
+                    double cost7;
+                    switch(find_difference(i, *it))
+                    {
+                    case 0:
+                        data[i].cost.push_back(3*cf+3*cs);
+                        break;
+                    case 1:
+                        for(int j=1; j<=range_size; ++j)
+                            tmphit.push_back(check_cache(i, (i%view_num+view_num-j)%view_num, diff));
+                        for(int j=0; j<=range_size; ++j)
+                            tmphit.push_back(check_cache(i, (i%view_num+j)%view_num, diff));
+                        if((1 == tmphit[0]) && (0 == tmphit[1]) && (0 == tmphit[2]) )
+                        {
+                            cost1 = cf+3*cs+a*dibr_distance(i, (r+1)%view_num, diff)+a*dibr_distance(i, r, diff);
+                            dis.clear();
+                            dis.push_back((r+1)%view_num);
+                            dis.push_back(diff[0]);
+                            cost2 = 2*cf+3*cs+a*dibr_distance(i, r, dis);
+                            dis.clear();
+                            dis.push_back(r);
+                            dis.push_back(diff[0]);
+                            cost3 = 2*cf+3*cs+a*dibr_distance(i, (r+1)%view_num, dis);
+                            dis.clear();
+                            cost4 = 3*cf+3*cs;
+                            if((cost1<=cost2) && (cost1<=cost3) && (cost1<=cost4))
+                                data[i].cost.push_back(cost1);
+                            else if((cost2<=cost1) && (cost2<=cost3) && (cost2<=cost4))
+                                data[i].cost.push_back(cost2);
+                            else if((cost3<=cost1) && (cost3<=cost2) && (cost3<=cost4))
+                                data[i].cost.push_back(cost3);
+                            else if((cost4<=cost1) && (cost4<=cost2) && (cost4<=cost3))
+                                data[i].cost.push_back(cost4);
+                        }
+                        if((1 == tmphit[0]) && (-1 == tmphit[1]) && (-1 == tmphit[2]))
+                        {
+                            dis.clear();
+                            dis.push_back((r+1)%view_num);
+                            dis.push_back(diff[0]);
+                            syn_rc = dibr_distance(i, r, dis);
+                            dis.clear();
+                            if((2*cf+3*cs+a*syn_rc)>(3*cf+3*cs))
+                                data[i].cost.push_back(3*cf+3*cs);
+                            else
+                                data[i].cost.push_back(2*cf+3*cs+a*syn_rc);
+                        }
+                        if((0 == tmphit[0]) && (1 == tmphit[1]) && (0 == tmphit[2]))
+                        {
+                            cost1 = cf+3*cs+a*dibr_distance(i, (r+view_num-1)%view_num, diff)+a*dibr_distance(i, (r+1)%view_num, diff);
+                            dis.clear();
+                            dis.push_back((r+view_num-1)%view_num);
+                            dis.push_back(diff[0]);
+                            cost2 = 2*cf+3*cs+a*dibr_distance(i, (r+1)%view_num, dis);
+                            dis.clear();
+                            dis.push_back((r+1)%view_num);
+                            dis.push_back(diff[0]);
+                            cost3 = 2*cf+3*cs+a*dibr_distance(i, (r+view_num-1)%view_num, dis);
+                            dis.clear();
+                            cost4 = 3*cf+3*cs;
+                            if((cost1<=cost2) && (cost1<=cost3) && (cost1<=cost4))
+                                data[i].cost.push_back(cost1);
+                            else if((cost2<=cost1) && (cost2<=cost3) && (cost2<=cost4))
+                                data[i].cost.push_back(cost2);
+                            else if((cost3<=cost1) && (cost3<=cost2) && (cost3<=cost4))
+                                data[i].cost.push_back(cost3);
+                            else if((cost4<=cost1) && (cost4<=cost2) && (cost4<=cost3))
+                                data[i].cost.push_back(cost4);
+                        }
+                        if((0 == tmphit[0]) && (1 == tmphit[1]) && (-1 == tmphit[2]))
+                        {
+                            dis.clear();
+                            dis.push_back((r+1)%view_num);
+                            dis.push_back(diff[0]);
+                            syn_rl = dibr_distance(i, r, dis);
+                            dis.clear();
+                            if((2*cf+3*cs+a*syn_rl)>(3*cf+3*cs))
+                                data[i].cost.push_back(3*cf+3*cs);
+                            else
+                                data[i].cost.push_back(2*cf+3*cs+a*syn_rl);
+                        }
+                        if((0 == tmphit[0]) && (0 == tmphit[1]) && (1 == tmphit[2]))
+                        {
+                            cost1 = cf+3*cs+a*dibr_distance(i, (r+view_num-1)%view_num, diff)+a*dibr_distance(i, r, diff);
+                            dis.clear();
+                            dis.push_back((r+view_num-1)%view_num);
+                            dis.push_back(diff[0]);
+                            cost2 = 2*cf+3*cs+a*dibr_distance(i, (r+view_num-1)%view_num, dis);
+                            dis.clear();
+                            dis.push_back((r+view_num-1)%view_num);
+                            dis.push_back(diff[0]);
+                            cost3 = 2*cf+3*cs+a*dibr_distance(i, r, dis);
+                            dis.clear();
+                            cost4 = 3*cf+3*cs;
+                            if((cost1<=cost2) && (cost1<=cost3) && (cost1<=cost4))
+                                data[i].cost.push_back(cost1);
+                            else if((cost2<=cost1) && (cost2<=cost3) && (cost2<=cost4))
+                                data[i].cost.push_back(cost2);
+                            else if((cost3<=cost1) && (cost3<=cost2) && (cost3<=cost4))
+                                data[i].cost.push_back(cost3);
+                            else if((cost4<=cost1) && (cost4<=cost2) && (cost4<=cost3))
+                                data[i].cost.push_back(cost4);
+                        }
+                        break;
+                        if((0 == tmphit[0]) && (0 == tmphit[1]) && (0 == tmphit[2]))
+                        {
+                            cost1 = cf+3*cs+a*dibr_distance(i, (r+view_num-1)%view_num, diff)+a*dibr_distance(i, r, diff)+a*dibr_distance(i, (r+1)%view_num, diff);
+                            dis.clear();
+                            dis.push_back((r+1)%view_num);
+                            dis.push_back(diff[0]);
+                            cost2 = 2*cf+3*cs+a*dibr_distance(i, (r+view_num-1)%view_num, dis)+a*dibr_distance(i, r, dis);
+                            dis.clear();
+                            dis.push_back(r);
+                            dis.push_back(diff[0]);
+                            cost3 = 2*cf+3*cs+a*dibr_distance(i, (r+view_num-1)%view_num, dis)+a*dibr_distance(i, (r+1)%view_num, dis);
+                            dis.clear();
+                            dis.push_back((r+view_num-1)%view_num);
+                            dis.push_back(diff[0]);
+                            cost4 = 2*cf+3*cs+a*dibr_distance(i, r, dis)+a*dibr_distance(i, (r+1)%view_num, dis);
+                            dis.clear();
+                            dis.push_back(r);
+                            dis.push_back((r+1)%view_num);
+                            dis.push_back(diff[0]);
+                            cost5 = 3*cf+3*cs+a*dibr_distance(i, (r+view_num-1)%view_num, dis);
+                            dis.clear();
+                            dis.push_back((r+view_num-1)%view_num);
+                            dis.push_back((r+1)%view_num);
+                            dis.push_back(diff[0]);
+                            cost6 = 3*cf+3*cs+a*dibr_distance(i, r, dis);
+                            dis.clear();
+                            dis.push_back((r+view_num-1)%view_num);
+                            dis.push_back(r);
+                            dis.push_back(diff[0]);
+                            cost7 = 3*cf+3*cs+a*dibr_distance(i, (r+1)%view_num, dis);
+                            dis.clear();
 
+                            if((cost1<=cost2) && (cost1<=cost3) && (cost1<=cost4) && (cost1<=cost5) && (cost1<=cost6) && (cost1<=cost7) )
+                                data[i].cost.push_back(cost1);
+                            else if((cost2<=cost1) && (cost2<=cost3) && (cost2<=cost4) && (cost2<=cost5) && (cost2<=cost6) && (cost2<=cost7) )
+                                data[i].cost.push_back(cost2);
+                            else if((cost3<=cost1) && (cost3<=cost2) && (cost3<=cost4) && (cost3<=cost5) && (cost3<=cost6) && (cost3<=cost7) )
+                                data[i].cost.push_back(cost3);
+                            else if((cost4<=cost1) && (cost4<=cost2) && (cost4<=cost3) && (cost4<=cost5) && (cost4<=cost6) && (cost4<=cost7) )
+                                data[i].cost.push_back(cost4);
+                            else if((cost5<=cost1) && (cost5<=cost2) && (cost5<=cost3) && (cost5<=cost4) && (cost5<=cost6) && (cost5<=cost7) )
+                                data[i].cost.push_back(cost5);
+                            else if((cost6<=cost1) && (cost6<=cost2) && (cost6<=cost3) && (cost6<=cost4) && (cost6<=cost5) && (cost6<=cost7) )
+                                data[i].cost.push_back(cost6);
+                            else if((cost7<=cost1) && (cost7<=cost2) && (cost7<=cost3) && (cost7<=cost4) && (cost7<=cost5) && (cost7<=cost6) )
+                                data[i].cost.push_back(cost7);
+                        }
+                        if((-1 == tmphit[0]) && (1 == tmphit[1]) && (0 == tmphit[2]))
+                        {
+                            dis.clear();
+                            dis.push_back((r+view_num-1)%view_num);
+                            dis.push_back(diff[0]);
+                            syn_rr = dibr_distance(i, (r+1)%view_num, dis);
+                            dis.clear();
+                            if((2*cf+3*cs+a*syn_rr)>(3*cf+3*cs))
+                                data[i].cost.push_back(3*cf+3*cs);
+                            else
+                                data[i].cost.push_back(2*cf+3*cs+a*syn_rr);
+                        }
+                        if((-1 == tmphit[0]) && (1 == tmphit[1]) && (-1 == tmphit[2]))
+                        {
+                            data[i].cost.push_back(3*cf+3*cs);
+                        }
+                        if((-1 == tmphit[0]) && (-1 == tmphit[1]) && (1 == tmphit[2]))
+                        {
+                            data[i].cost.push_back(3*cf+3*cs);
+                        }
+                    case 2:
+                        for(int j=1; j<=range_size; ++j)
+                            tmphit.push_back(check_cache(i, (i%view_num+view_num-j)%view_num, diff));
+                        for(int j=0; j<=range_size; ++j)
+                            tmphit.push_back(check_cache(i, (i%view_num+j)%view_num, diff));
+                        if((1 == tmphit[0]) && (1 == tmphit[1]) && (0 == tmphit[2]))
+                        {
+                            syn_rr = dibr_distance(i, (r+1)%view_num, diff);
+                            dis.clear();
+                            if((2*cf+3*cs+a*syn_rr)>(3*cf+3*cs))
+                                data[i].cost.push_back(3*cf+3*cs);
+                            else
+                                data[i].cost.push_back(2*cf+3*cs+a*syn_rr);
+                        }
+                        if((1 == tmphit[0]) && (1 == tmphit[1]) && (-1 == tmphit[2]))
+                        {
+                            data[i].cost.push_back(3*cf+3*cs);
+                        }
+                        if((1 == tmphit[0]) && (0 == tmphit[1]) && (1 == tmphit[2]))
+                        {
+                            syn_rc = dibr_distance(i, r, diff);
+                            dis.clear();
+                            if((2*cf+3*cs+a*syn_rc)>(3*cf+3*cs))
+                                data[i].cost.push_back(3*cf+3*cs);
+                            else
+                                data[i].cost.push_back(2*cf+3*cs+a*syn_rc);
+                        }
+                        if((1 == tmphit[0]) && (0 == tmphit[1]) && (0 == tmphit[2]))
+                        {
+                            cost1 = 2*cf+3*cs+a*dibr_distance(i, r, diff)+a*dibr_distance(i, (r+1)%view_num, diff);
+                            dis.clear();
+                            dis.push_back(r);
+                            dis.push_back(diff[0]);
+                            dis.push_back(diff[1]);
+                            cost2 = 3*cf+3*cs+a*dibr_distance(i, (r+1)%view_num, dis);
+                            dis.clear();
+                            dis.push_back((r+1)%view_num);
+                            dis.push_back(diff[0]);
+                            dis.push_back(diff[1]);
+                            cost3 = 3*cf+3*cs+a*dibr_distance(i, r, dis);
+                            dis.clear();
+                            if((cost1<=cost2) && (cost1<=cost3))
+                                data[i].cost.push_back(cost1);
+                            else if((cost2<=cost1) && (cost2<=cost3))
+                                data[i].cost.push_back(cost2);
+                            else if((cost3<=cost1) && (cost3<=cost2))
+                                data[i].cost.push_back(cost3);
+                        }
+                        if((0 == tmphit[0]) && (1 == tmphit[1]) && (1 == tmphit[2]))
+                        {
+                            syn_rl = dibr_distance(i, (r+view_num-1)%view_num, diff);
+                            dis.clear();
+                            if((2*cf+3*cs+a*syn_rl)>(3*cf+3*cs))
+                                data[i].cost.push_back(3*cf+3*cs);
+                            else
+                                data[i].cost.push_back(2*cf+3*cs+a*syn_rl);
+                        }
+                        if((0 == tmphit[0]) && (1 == tmphit[1]) && (0 == tmphit[2]))
+                        {
+                            cost1 = 2*cf+3*cs+a*dibr_distance(i, (r+view_num-1)%view_num, diff)+a*dibr_distance(i, (r+1)%view_num, diff);
+                            dis.clear();
+                            dis.push_back((r+view_num-1)%view_num);
+                            dis.push_back(diff[0]);
+                            dis.push_back(diff[1]);
+                            cost2 = 3*cf+3*cs+a*dibr_distance(i, (r+1)%view_num, dis);
+                            dis.clear();
+                            dis.push_back((r+1)%view_num);
+                            dis.push_back(diff[0]);
+                            dis.push_back(diff[1]);
+                            cost3 = 3*cf+3*cs+a*dibr_distance(i, (r+view_num-1)%view_num, dis);
+                            dis.clear();
+                            if((cost1<=cost2) && (cost1<=cost3))
+                                data[i].cost.push_back(cost1);
+                            else if((cost2<=cost1) && (cost2<=cost3))
+                                data[i].cost.push_back(cost2);
+                            else if((cost3<=cost1) && (cost3<=cost2))
+                                data[i].cost.push_back(cost3);
+                        }
+                        if((0 == tmphit[0]) && (1 == tmphit[1]) && (-1 == tmphit[2]))
+                        {
+                            dis.clear();
+                            dis.push_back((r+1)%view_num);
+                            dis.push_back(diff[0]);
+                            dis.push_back(diff[1]);
+                            syn_rl = dibr_distance(i, (r+view_num-1)%view_num, dis);
+                            dis.clear();
+                            data[i].cost.push_back(3*cf+3*cs+a*syn_rl);
+                        }
+                        if((0 == tmphit[0]) && (0 == tmphit[1]) && (1 == tmphit[2]))
+                        {
+                            cost1 = 2*cf+3*cs+a*dibr_distance(i, (r+view_num-1)%view_num, diff)+a*dibr_distance(i, r, diff);
+                            dis.clear();
+                            dis.push_back((r+view_num-1)%view_num);
+                            dis.push_back(diff[0]);
+                            dis.push_back(diff[1]);
+                            cost2 = 3*cf+3*cs+a*dibr_distance(i, r, dis);
+                            dis.clear();
+                            dis.push_back(r);
+                            dis.push_back(diff[0]);
+                            dis.push_back(diff[1]);
+                            cost3 = 3*cf+3*cs+a*dibr_distance(i, (r+view_num-1)%view_num, dis);
+                            dis.clear();
+                            if((cost1<=cost2) && (cost1<=cost3))
+                                data[i].cost.push_back(cost1);
+                            else if((cost2<=cost1) && (cost2<=cost3))
+                                data[i].cost.push_back(cost2);
+                            else if((cost3<=cost1) && (cost3<=cost2))
+                                data[i].cost.push_back(cost3);
+                        }
+                        if((0 == tmphit[0]) && (0 == tmphit[1]) && (0 == tmphit[2]))
+                        {
+                            cost1 = 2*cf+3*cs+a*dibr_distance(i, r, diff)+a*dibr_distance(i, (r+view_num-1)%view_num, diff)+a*dibr_distance(i, (r+1)%view_num, diff);
+                            dis.clear();
+                            dis.push_back((r+1)%view_num);
+                            dis.push_back(diff[0]);
+                            dis.push_back(diff[1]);
+                            cost2 = 3*cf+3*cs+a*dibr_distance(i, (r+view_num-1)%view_num, dis)+a*dibr_distance(i, r, dis);
+                            dis.clear();
+                            dis.push_back(r);
+                            dis.push_back(diff[0]);
+                            dis.push_back(diff[1]);
+                            cost3 = 3*cf+3*cs+a*dibr_distance(i, (r+view_num-1)%view_num, dis)+a*dibr_distance(i, (r+1)%view_num, dis);
+                            dis.clear();
+                            dis.push_back((r+view_num-1)%view_num);
+                            dis.push_back(diff[0]);
+                            dis.push_back(diff[1]);
+                            cost4 = 3*cf+3*cs+a*dibr_distance(i, r, dis)+a*dibr_distance(i, (r+1)%view_num, dis);
+                            dis.clear();
+                            if((cost1<=cost2) && (cost1<=cost3) && (cost1<=cost4))
+                                data[i].cost.push_back(cost1);
+                            else if((cost2<=cost1) && (cost2<=cost3) && (cost2<=cost4))
+                                data[i].cost.push_back(cost2);
+                            else if((cost3<=cost1) && (cost3<=cost2) && (cost3<=cost4))
+                                data[i].cost.push_back(cost3);
+                            else if((cost4<=cost1) && (cost4<=cost2) && (cost4<=cost3))
+                                data[i].cost.push_back(cost4);
+                        }
+                        if((-1 == tmphit[0]) && (1 == tmphit[1]) && (1 == tmphit[2]))
+                        {
+                            data[i].cost.push_back(3*cf+3*cs);
+                        }
+                        if((-1 == tmphit[0]) && (1 == tmphit[1]) && (0 == tmphit[2]))
+                        {
+                            dis.clear();
+                            dis.push_back((r+view_num-1)%view_num);
+                            dis.push_back(diff[0]);
+                            dis.push_back(diff[1]);
+                            syn_rr = dibr_distance(i, (r+1)%view_num, dis);
+                            dis.clear();
+                            data[i].cost.push_back(3*cf+3*cs+a*syn_rr);
+                        }
+                        break;
+                    case 3:
+                        for(int j=1; j<=range_size; ++j)
+                            tmphit.push_back(check_cache(i, (i%view_num+view_num-j)%view_num, diff));
+                        for(int j=0; j<=range_size; ++j)
+                            tmphit.push_back(check_cache(i, (i%view_num+j)%view_num, diff));
+                        if((1 == tmphit[0]) && (1 == tmphit[1]) && (1 == tmphit[2]))
+                        {
+                            data[i].cost.push_back(3*cf+3*cs);
+                        }
+                        if((1 == tmphit[0]) && (1 == tmphit[1]) && (0 == tmphit[2]))
+                        {
+                            syn_rr = dibr_distance(i, (r+1)%view_num, diff);
+                            dis.clear();
+                            data[i].cost.push_back(3*cf+3*cs+a*syn_rr);
+                        }
+                        if((1 == tmphit[0]) && (0 == tmphit[1]) && (1 == tmphit[2]))
+                        {
+                            syn_rc = dibr_distance(i, r, diff);
+                            dis.clear();
+                            data[i].cost.push_back(3*cf+3*cs+a*syn_rc);
+                        }
+                        if((1 == tmphit[0]) && (0 == tmphit[1]) && (0 == tmphit[2]))
+                        {
+                            syn_rc = dibr_distance(i, r, diff);
+                            syn_rr = dibr_distance(i, (r+1)%view_num, diff);
+                            dis.clear();
+                            data[i].cost.push_back(3*cf+3*cs+a*syn_rr+a*syn_rc);
+                        }
+                        if((0 == tmphit[0]) && (1 == tmphit[1]) && (1 == tmphit[2]))
+                        {
+                            syn_rl = dibr_distance(i, (r+view_num-1)%view_num, diff);
+                            data[i].cost.push_back(3*cf+3*cs+a*syn_rl);
+                        }
+                        if((0 == tmphit[0]) && (1 == tmphit[1]) && (0 == tmphit[2]))
+                        {
+                            syn_rl = dibr_distance(i, (r+view_num-1)%view_num, diff);
+                            syn_rr = dibr_distance(i, (r+1)%view_num, diff);
+                            dis.clear();
+                            data[i].cost.push_back(3*cf+3*cs+a*syn_rr+a*syn_rl);
+                        }
+                        if((0 == tmphit[0]) && (0 == tmphit[1]) && (1 == tmphit[2]))
+                        {
+                            syn_rc = dibr_distance(i, r, diff);
+                            syn_rl = dibr_distance(i, (r+view_num-1)%view_num, diff);
+                            dis.clear();
+                            data[i].cost.push_back(3*cf+3*cs+a*syn_rc+a*syn_rl);
+                        }
+                        if((0 == tmphit[0]) && (0 == tmphit[1]) && (0 == tmphit[2]))
+                        {
+                            syn_rc = dibr_distance(i, r, diff);
+                            syn_rl = dibr_distance(i, (r+view_num-1)%view_num, diff);
+                            syn_rr = dibr_distance(i, (r+1)%view_num, diff);
+                            dis.clear();
+                            data[i].cost.push_back(3*cf+3*cs+a*syn_rl+a*syn_rc+a*syn_rr);
+                        }
+                        break;
+                    }
+                }
             }
         }
 
+
         /*for(int k=0; k<cache_size; ++k)
-            printf("%d ", data[20].cache_state_index->cache[k]);
+            printf("%d ", data[38].cache_state_index->cache[k]);
+            printf("\n");
         vector<int> diff;
-        diff.push_back(2);
+        //diff.push_back(6);
+        diff.push_back(7);
+        diff.push_back(14);
         printf("\n%d\n", check_cache(20, 2, diff));
         for(vector<int>::iterator it=data[250].neighborhood.begin(); it!=data[250].neighborhood.end(); ++it)
         {
@@ -195,7 +2651,8 @@ public:
             for(int k=0; k<cache_size; ++k)
                 printf("%d ", data[*it].cache_state_index->cache[k]);
             printf("\n%d\n", (*it) % view_num);
-        }*/
+        }
+        printf("%d\n", dibr_distance(38, 15, diff));*/
     }
 
 private:
@@ -207,6 +2664,55 @@ private:
 
         for(int j=0; j<=range_size; ++j)
             diff.push_back(check_cache(i, (i%view_num+j)%view_num, tmp));
+    }
+
+    double dibr_distance(int i, int curr_request, vector<int> &addition)
+    {
+        int left_min = view_num, left_max = -1, right_min = view_num, right_max = -1, cost1 = DIBR_range + 1, cost2 = DIBR_range + 1, cost3 = DIBR_range + 1;
+        for(int j=0; j<cache_size; ++j)
+        {
+            //get the synthesis view for checking the DIBR_range
+            if(curr_request < data[i].cache_state_index->cache[j])
+            {
+                if(data[i].cache_state_index->cache[j] < right_min)
+                    right_min = data[i].cache_state_index->cache[j];
+                if(data[i].cache_state_index->cache[j] > right_max)
+                    right_max = data[i].cache_state_index->cache[j];
+            }
+            else
+            {
+                if(data[i].cache_state_index->cache[j] < left_min)
+                    left_min = data[i].cache_state_index->cache[j];
+                if(data[i].cache_state_index->cache[j] > left_max)
+                    left_max = data[i].cache_state_index->cache[j];
+            }
+        }
+        for(vector<int>::iterator it=addition.begin(); it!=addition.end(); ++it)
+        {
+            //get the synthesis view for checking the DIBR_range
+            if(curr_request < (*it))
+            {
+                if((*it) < right_min)
+                    right_min = (*it);
+                if((*it) > right_max)
+                    right_max = (*it);
+            }
+            else
+            {
+                if((*it) < left_min)
+                    left_min = (*it);
+                if((*it) > left_max)
+                    left_max = (*it);
+            }
+        }
+        if((right_min != view_num && left_max != -1 && DIBR_range >= (cost1 = right_min - left_max)) ||
+                (left_min * left_max >= 0 && left_min != left_max && DIBR_range >= (cost2 = left_min - left_max + view_num)) ||
+                (right_min * right_max >= 0 && right_min != right_max && DIBR_range >= (cost3 = right_min - right_max + view_num)))
+        {
+            cost1 = cost1 < cost2 ? cost1 : cost2;
+            return (double)(cost1 < cost3 ? cost1 : cost3);
+        }
+        return -1;
     }
 
     int check_cache(int i, int curr_request, vector<int> &addition)
