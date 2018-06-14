@@ -48,7 +48,7 @@ public:
     void start()
     {
         int i, j, k, curr_user, other_user;
-        for(i=2; i<3; ++i)
+        for(i=0; i<1; ++i)
         {
             curr_user = -1;
             for(j=0; j<max_user_num; ++j)
@@ -71,7 +71,7 @@ public:
             }
         }
 
-        for(i=2; i<3; ++i)
+        for(i=0; i<1; ++i)
         {
             vector<int> is_hit;
             node_hit(i, is_hit);
@@ -2635,24 +2635,25 @@ public:
         }
 
 
-        /*for(int k=0; k<cache_size; ++k)
-            printf("%d ", data[38].cache_state_index->cache[k]);
-            printf("\n");
-        vector<int> diff;
+        for(int k=0; k<cache_size; ++k)
+            printf("%d ", data[0].cache_state_index->cache[k]);
+        printf("\n");
+        //vector<int> diff;
         //diff.push_back(6);
-        diff.push_back(7);
-        diff.push_back(14);
-        printf("\n%d\n", check_cache(20, 2, diff));
-        for(vector<int>::iterator it=data[250].neighborhood.begin(); it!=data[250].neighborhood.end(); ++it)
+        //diff.push_back(7);
+        //diff.push_back(14);
+        //printf("\n%d\n", check_cache(20, 2, diff));
+        for(vector<int>::iterator it=data[0].cost.begin(); it!=data[0].cost.end(); ++it)
         {
-            for(int k=0; k<max_user_num; ++k)
+	    printf("%d\n", *it);
+            /*for(int k=0; k<max_user_num; ++k)
                 printf("%d ", data[*it].view_state_index->view[k]);
             printf("\n");
             for(int k=0; k<cache_size; ++k)
                 printf("%d ", data[*it].cache_state_index->cache[k]);
-            printf("\n%d\n", (*it) % view_num);
+            printf("\n%d\n", (*it) % view_num);*/
         }
-        printf("%d\n", dibr_distance(38, 15, diff));*/
+        //printf("%d\n", dibr_distance(38, 15, diff));
     }
 
 private:
