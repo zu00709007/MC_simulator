@@ -7,23 +7,25 @@ Request::Request(int view_num, int max_user_num, double enter_prob, double leave
     for(int i=0; i<view_num; ++i)
         view[i] = 0;
 
-    FILE* output_file;
+    FILE* output_file, *output_file2;
     output_file = fopen("request_seed", "w");
+    output_file2 = fopen("Nt_seed", "w");
     for(int i=0; i<request_num-1; ++i)
-        fprintf(output_file, "%d\n", request());
-    fprintf(output_file, "%d", request());
+        fprintf(output_file, "%d\n", request(output_file2));
+    fprintf(output_file, "%d", request(output_file2));
     fclose(output_file);
+    fclose(output_file2);
 }
 
-int Request::request()
+int Request::request(FILE* output_file2)
 {
     //get the request until success
     int curr_request;
-    while(!request_get(curr_request));
+    while(!request_get(curr_request, output_file2));
     return curr_request;
 }
 
-int Request::request_get(int& curr_request)
+int Request::request_get(int& curr_request, FILE* output_file2)
 {
     double rand_request = (double)rand() / ((double)RAND_MAX + 1);
     int view_tmp[view_num], j;
@@ -38,6 +40,7 @@ int Request::request_get(int& curr_request)
         j = (int)(view_num * (double)rand() / ((double)RAND_MAX + 1));
         ++view[j];
         curr_request = j;
+        fprintf(output_file2, "%d %d\n", 0, curr_request);
     }
     else if(rand_request < leave_prob)
     {
@@ -58,6 +61,7 @@ int Request::request_get(int& curr_request)
                 --curr_user_num;
                 --view[j];
                 curr_request = j;
+                fprintf(output_file2, "%d %d\n", 1, curr_request);
                 break;
             }
     }
@@ -85,14 +89,17 @@ int Request::request_get(int& curr_request)
                         --view[j];
                         ++view[(j+view_num-1)%view_num];
                         curr_request = (j + view_num - 1) % view_num;
+                        fprintf(output_file2, "%d %d %d\n", 2, j, curr_request);
                         break;
                     case 1:
                         curr_request = j;
+                        fprintf(output_file2, "%d %d %d\n", 2, curr_request, curr_request);
                         break;
                     case 2:
                         --view[j];
                         ++view[(j+1)%view_num];
                         curr_request = (j + 1) % view_num;
+                        fprintf(output_file2, "%d %d %d\n", 2, j, curr_request);
                         break;
                     }
                 //choose the left, center or right view in zipf
@@ -104,15 +111,21 @@ int Request::request_get(int& curr_request)
                         --view[j];
                         ++view[(j+view_num-1)%view_num];
                         curr_request = (j + view_num - 1) % view_num;
+                        fprintf(output_file2, "%d %d %d\n", 2, j, curr_request);
                     }
                     else if(tmp < zipf_right)
                     {
                         --view[j];
                         ++view[(j+1)%view_num];
                         curr_request = (j + 1) % view_num;
+                        fprintf(output_file2, "%d %d %d\n", 2, j, curr_request);
                     }
                     else
+                    {
                         curr_request = j;
+                        fprintf(output_file2, "%d %d %d\n", 2, curr_request, curr_request);
+                    }
+
                 }
                 break;
             }
