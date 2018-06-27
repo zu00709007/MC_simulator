@@ -119,6 +119,25 @@ hit_:
         total_synthesis += dibr_distance(*it, Vf);
     synthesis += Vsyn.size();
     hit += Vsyn.size();
+    vector<struct Cache_node> for_sort;
+    for(vector<int>::iterator it=Vf.begin(); it!= Vf.end(); ++it)
+    {
+        struct Cache_node tmp = {*it, view_request_count[*it]};
+        for_sort.push_back(tmp);
+    }
+    for(int j=0; j<cache_size; ++j)
+    {
+        struct Cache_node tmp = {Cache[j], view_request_count[Cache[j]]};
+        for_sort.push_back(tmp);
+    }
+    sort(for_sort.begin(), for_sort.end(), compare_sort);
+    for(int j=0; j<cache_size; ++j)
+        Cache[j] = for_sort[j].view_content;
+}
+
+bool Huristic::compare_sort(struct Cache_node i, struct Cache_node j)
+{
+    return i.pv > j.pv;
 }
 
 int Huristic::get_hit()

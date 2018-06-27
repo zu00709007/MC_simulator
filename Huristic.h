@@ -1,6 +1,7 @@
 #include<stdio.h>
 #include<limits.h>
 #include<vector>
+#include<algorithm>
 using namespace std;
 
 class Huristic
@@ -15,6 +16,12 @@ public:
     int get_cf_view();
 
 private:
+    struct Cache_node
+    {
+        int view_content;
+        int pv;
+    };
+    static bool compare_sort(struct Cache_node, struct Cache_node);
     double dibr_distance(int, vector<int>&);
     int hit;
     int synthesis;
