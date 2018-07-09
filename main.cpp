@@ -52,7 +52,7 @@ public:
         fstream out_file;
         out_file.open("test.txt", fstream::out);
         int i, j, k, l, curr_user, other_user;
-        for(i=0; i<view_state_count*cache_state_count*view_num; ++i)
+        for(i=0; i<100000; ++i)
         {
             curr_user = -1;
             for(j=0; j<max_user_num; ++j)
@@ -75,7 +75,7 @@ public:
             }
         }
 
-        for(i=0; i<view_state_count*cache_state_count*view_num; ++i)
+        for(i=0; i<100000; ++i)
         {
             vector<int> is_hit;
             node_hit(i, is_hit);
