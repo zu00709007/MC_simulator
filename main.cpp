@@ -50,9 +50,9 @@ public:
     void start()
     {
         fstream out_file;
-        out_file.open("test.txt", fstream::out);
+        out_file.open("test1.txt", fstream::out);
         int i, j, k, l, curr_user, other_user;
-        for(i=0; i<100000; ++i)
+        for(i=100000; i<200000; ++i)
         {
             curr_user = -1;
             for(j=0; j<max_user_num; ++j)
@@ -75,7 +75,7 @@ public:
             }
         }
 
-        for(i=0; i<100000; ++i)
+        for(i=100000; i<200000; ++i)
         {
             vector<int> is_hit;
             node_hit(i, is_hit);
